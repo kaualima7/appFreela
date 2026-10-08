@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { ClientsModule } from './clients/clients.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
-  imports: [UsersModule, ProfilesModule, ClientsModule], //outros módulos
+  imports: [UsersModule, ProfilesModule, ClientsModule, ProjectsModule], //outros módulos
   controllers: [AppController], //quem recebe requisições http
   providers: [AppService], //serviços/lógica da aplicação
 })
