@@ -25,9 +25,9 @@ export class ProjectsService {
     }
   }
 
-  async create(dto: CreateProjectDto) {
-    const client = await this.prisma.client.findUnique({
-      where: { id: dto.clientId },
+  async create(dto: CreateProjectDto, userId: number) {
+    const client = await this.prisma.client.findFirst({
+      where: { id: dto.clientId, userId },
     });
     if (!client) throw new BadRequestException('Cliente não existe.');
     const startDate = dto.startDate ? new Date(dto.startDate) : new Date();
@@ -47,30 +47,32 @@ export class ProjectsService {
     return this.formatResponse(project);
   }
 
-  async findAll(clientId: number) {
+  async findAll(clientId: number, userId: number) {
     if (clientId <= 0 || clientId > 2147483647)
       throw new BadRequestException('clientId inválido.');
-    const client = await this.prisma.client.findUnique({
-      where: { id: clientId },
+    const client = await this.prisma.client.findFirst({
+      where: { id: clientId, userId },
     });
     if (!client) throw new BadRequestException('Cliente não existe.');
     const projects = await this.prisma.project.findMany({
-      where: { clientId },
+      where: { clientId, client: { userId } },
       orderBy: { title: 'asc' },
     });
     return projects.map((project) => this.formatResponse(project));
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, userId: number) {
     if (id <= 0 || id > 2147483647)
       throw new BadRequestException('ID de projeto inválido.');
-    const project = await this.prisma.project.findUnique({ where: { id } });
+    const project = await this.prisma.project.findFirst({
+      where: { id, client: { userId } },
+    });
     if (!project) throw new NotFoundException('Projeto não encontrado.');
     return this.formatResponse(project);
   }
 
-  async update(id: number, dto: UpdateProjectDto) {
-    const current = await this.findOne(id);
+  async update(id: number, dto: UpdateProjectDto, userId: number) {
+    const current = await this.findOne(id, userId);
     const startDate = dto.startDate
       ? new Date(dto.startDate)
       : current.startDate;
@@ -91,8 +93,8 @@ export class ProjectsService {
     return this.formatResponse(project);
   }
 
-  async remove(id: number) {
-    await this.findOne(id);
+  async remove(id: number, userId: number) {
+    await this.findOne(id, userId);
     await this.prisma.project.delete({ where: { id } });
     return { message: 'Projeto excluído com sucesso.' };
   }

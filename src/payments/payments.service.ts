@@ -30,9 +30,9 @@ export class PaymentsService {
     }
   }
 
-  async create(dto: CreatePaymentDto) {
-    const project = await this.prisma.project.findUnique({
-      where: { id: dto.projectId },
+  async create(dto: CreatePaymentDto, userId: number) {
+    const project = await this.prisma.project.findFirst({
+      where: { id: dto.projectId, client: { userId } },
     });
     if (!project) throw new BadRequestException('Projeto não existe.');
     const status = dto.status ?? 'PENDING';
@@ -51,30 +51,32 @@ export class PaymentsService {
     return this.formatResponse(payment);
   }
 
-  async findAll(projectId: number) {
+  async findAll(projectId: number, userId: number) {
     if (projectId <= 0 || projectId > 2147483647)
       throw new BadRequestException('projectId inválido.');
-    const project = await this.prisma.project.findUnique({
-      where: { id: projectId },
+    const project = await this.prisma.project.findFirst({
+      where: { id: projectId, client: { userId } },
     });
     if (!project) throw new BadRequestException('Projeto não existe.');
     const payments = await this.prisma.payment.findMany({
-      where: { projectId },
+      where: { projectId, project: { client: { userId } } },
       orderBy: { dueDate: 'asc' },
     });
     return payments.map((payment) => this.formatResponse(payment));
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, userId: number) {
     if (id <= 0 || id > 2147483647)
       throw new BadRequestException('ID de pagamento inválido.');
-    const payment = await this.prisma.payment.findUnique({ where: { id } });
+    const payment = await this.prisma.payment.findFirst({
+      where: { id, project: { client: { userId } } },
+    });
     if (!payment) throw new NotFoundException('Pagamento não encontrado.');
     return this.formatResponse(payment);
   }
 
-  async update(id: number, dto: UpdatePaymentDto) {
-    const current = await this.findOne(id);
+  async update(id: number, dto: UpdatePaymentDto, userId: number) {
+    const current = await this.findOne(id, userId);
     const status = dto.status ?? current.status;
     const paidAt =
       dto.paidAt === undefined
@@ -97,8 +99,8 @@ export class PaymentsService {
     return this.formatResponse(payment);
   }
 
-  async remove(id: number) {
-    await this.findOne(id);
+  async remove(id: number, userId: number) {
+    await this.findOne(id, userId);
     await this.prisma.payment.delete({ where: { id } });
     return { message: 'Pagamento excluído com sucesso.' };
   }

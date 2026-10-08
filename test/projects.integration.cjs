@@ -37,12 +37,23 @@ async function main() {
     app.setGlobalPrefix('api');
     app.useGlobalPipes(new ValidationPipe());
     await app.listen(0, '127.0.0.1');
-    for (const name of ['users', 'profiles', 'clients', 'projects']) {
+    for (const name of [
+      'users',
+      'profiles',
+      'clients',
+      'projects',
+      'payments',
+    ]) {
       const exported = require(`../dist/${name}/${name}.module`);
       const module = Object.values(exported)[0];
       connections.push(app.select(module).get(PrismaService, { strict: true }));
     }
     const prisma = connections.at(-1);
+    const { JwtService } = require('@nestjs/jwt');
+    const signer = new JwtService({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1d' },
+    });
     const suffix = Date.now();
     const user = await prisma.user.create({
       data: {
@@ -62,7 +73,10 @@ async function main() {
     async function request(method, route, body, expected) {
       const response = await fetch(base + route, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + accessToken,
+        },
         ...(body === undefined ? {} : { body: JSON.stringify(body) }),
         signal: AbortSignal.timeout(10000),
       });
@@ -75,6 +89,7 @@ async function main() {
       checks++;
       return data;
     }
+    const accessToken = await signer.signAsync({ sub: user.id });
     const valid = {
       clientId: client.id,
       title: 'Site do Cliente',

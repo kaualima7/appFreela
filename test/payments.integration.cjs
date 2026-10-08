@@ -47,6 +47,11 @@ async function main() {
       connections.push(app.select(module).get(PrismaService, { strict: true }));
     }
     const prisma = connections.at(-1);
+    const { JwtService } = require('@nestjs/jwt');
+    const signer = new JwtService({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1d' },
+    });
     const user = await prisma.user.create({
       data: {
         name: 'Teste Payment',
@@ -68,7 +73,10 @@ async function main() {
     async function request(method, route, body, expected) {
       const response = await fetch(base + route, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + accessToken,
+        },
         ...(body === undefined ? {} : { body: JSON.stringify(body) }),
         signal: AbortSignal.timeout(10000),
       });
@@ -81,6 +89,7 @@ async function main() {
       checks++;
       return result;
     }
+    const accessToken = await signer.signAsync({ sub: user.id });
     const valid = {
       projectId: project.id,
       amount: '250.50',

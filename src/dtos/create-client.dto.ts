@@ -1,18 +1,12 @@
 import {
   IsEmail,
-  IsInt,
   IsOptional,
-  IsPositive,
   IsString,
   Length,
   MaxLength,
 } from 'class-validator';
 
 export class CreateClientDto {
-  @IsInt()
-  @IsPositive()
-  userId: number;
-
   @IsString()
   @Length(2, 120)
   name: string;

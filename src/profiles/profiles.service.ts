@@ -11,9 +11,9 @@ import { PrismaService } from '../database/prisma.service';
 @Injectable()
 export class ProfilesService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(dto: CreateProfileDto) {
+  async create(dto: CreateProfileDto, userId: number) {
     const user = await this.prisma.user.findUnique({
-      where: { id: dto.userId },
+      where: { id: userId },
     });
 
     if (!user) {
@@ -21,7 +21,7 @@ export class ProfilesService {
     }
 
     const existingProfile = await this.prisma.profile.findUnique({
-      where: { userId: dto.userId },
+      where: { userId: userId },
     });
 
     if (existingProfile) {
@@ -30,7 +30,7 @@ export class ProfilesService {
 
     return this.prisma.profile.create({
       data: {
-        userId: dto.userId,
+        userId: userId,
         fullName: dto.fullName,
         birthDate: dto.birthDate ? new Date(dto.birthDate) : undefined,
         avatarUrl: dto.avatarUrl,
@@ -38,9 +38,9 @@ export class ProfilesService {
     });
   }
 
-  async findOne(id: number) {
-    const profile = await this.prisma.profile.findUnique({
-      where: { id },
+  async findOne(id: number, userId: number) {
+    const profile = await this.prisma.profile.findFirst({
+      where: { id, userId },
     });
 
     if (!profile) {
@@ -50,8 +50,8 @@ export class ProfilesService {
     return profile;
   }
 
-  async update(id: number, dto: UpdateProfileDto) {
-    await this.findOne(id);
+  async update(id: number, dto: UpdateProfileDto, userId: number) {
+    await this.findOne(id, userId);
 
     return this.prisma.profile.update({
       where: { id },

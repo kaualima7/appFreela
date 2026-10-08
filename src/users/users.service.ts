@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,6 +12,14 @@ import * as bcrypt from 'bcryptjs';
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
+
+  findByEmail(email: string) {
+    return this.prisma.user.findUnique({ where: { email } });
+  }
+
+  findById(id: number) {
+    return this.prisma.user.findUnique({ where: { id }, select: { id: true } });
+  }
 
   async createUser(dto: CreateUserDto) {
     const existingUser = await this.prisma.user.findUnique({
@@ -38,8 +47,9 @@ export class UsersService {
     });
   }
 
-  async getAllUsers() {
+  async getAllUsers(userId: number) {
     return this.prisma.user.findMany({
+      where: { id: userId },
       select: {
         id: true,
         name: true,
@@ -52,7 +62,9 @@ export class UsersService {
     });
   }
 
-  async updateUser(id: number, dto: UpdateUserDto) {
+  async updateUser(id: number, dto: UpdateUserDto, userId: number) {
+    if (id !== userId)
+      throw new ForbiddenException('Acesso permitido somente à própria conta.');
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -86,7 +98,9 @@ export class UsersService {
     });
   }
 
-  async deleteUser(id: number) {
+  async deleteUser(id: number, userId: number) {
+    if (id !== userId)
+      throw new ForbiddenException('Acesso permitido somente à própria conta.');
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
