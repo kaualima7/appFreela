@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -9,6 +10,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { IS_PUBLIC } from './public.decorator';
 import type { AuthenticatedRequest } from './authenticated-request';
+import { ACCOUNT_TYPES } from './account-types.decorator';
+import type { AccountType } from '../generated/prisma/client';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -42,11 +45,20 @@ export class JwtAuthGuard implements CanActivate {
       ) {
         throw new Error('Token sem identidade ou validade.');
       }
-      if (!(await this.users.findById(payload.sub)))
-        throw new Error('Usuário não existe.');
-      request.user = { sub: payload.sub };
+      const user = await this.users.findById(payload.sub);
+      if (!user) throw new Error('Usuário não existe.');
+      request.user = { sub: user.id, accountType: user.accountType };
     } catch {
       throw new UnauthorizedException('Token inválido ou expirado.');
+    }
+    const accountTypes = this.reflector.getAllAndOverride<AccountType[]>(
+      ACCOUNT_TYPES,
+      [context.getHandler(), context.getClass()],
+    );
+    if (accountTypes && !accountTypes.includes(request.user.accountType)) {
+      throw new ForbiddenException(
+        'Tipo de conta sem permissão para esta operação.',
+      );
     }
     return true;
   }

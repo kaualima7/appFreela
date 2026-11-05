@@ -47,13 +47,15 @@ export class ProjectsService {
     return this.formatResponse(project);
   }
 
-  async findAll(clientId: number, userId: number) {
-    if (clientId <= 0 || clientId > 2147483647)
-      throw new BadRequestException('clientId inválido.');
-    const client = await this.prisma.client.findFirst({
-      where: { id: clientId, userId },
-    });
-    if (!client) throw new BadRequestException('Cliente não existe.');
+  async findAll(clientId: number | undefined, userId: number) {
+    if (clientId !== undefined) {
+      if (clientId <= 0 || clientId > 2147483647)
+        throw new BadRequestException('clientId inválido.');
+      const client = await this.prisma.client.findFirst({
+        where: { id: clientId, userId },
+      });
+      if (!client) throw new BadRequestException('Cliente não existe.');
+    }
     const projects = await this.prisma.project.findMany({
       where: { clientId, client: { userId } },
       orderBy: { title: 'asc' },

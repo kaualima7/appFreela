@@ -11,13 +11,29 @@ import { UpdateClientDto } from '../dtos/update-client.dto';
 export class ClientsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private async validateClientAccount(clientUserId?: number | null) {
+    if (clientUserId == null) return;
+    const clientUser = await this.prisma.user.findUnique({
+      where: { id: clientUserId },
+      select: { accountType: true },
+    });
+    if (clientUser?.accountType !== 'CLIENT') {
+      throw new BadRequestException(
+        'A conta vinculada deve ser do tipo CLIENT.',
+      );
+    }
+  }
+
   async create(dto: CreateClientDto, userId: number) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new BadRequestException('Usuário não existe.');
 
+    await this.validateClientAccount(dto.clientUserId);
+
     return this.prisma.client.create({
       data: {
         userId: userId,
+        clientUserId: dto.clientUserId,
         name: dto.name,
         email: dto.email,
         phone: dto.phone,
@@ -48,9 +64,11 @@ export class ClientsService {
 
   async update(id: number, dto: UpdateClientDto, userId: number) {
     await this.findOne(id, userId);
+    await this.validateClientAccount(dto.clientUserId);
     return this.prisma.client.update({
       where: { id },
       data: {
+        clientUserId: dto.clientUserId,
         name: dto.name,
         email: dto.email,
         phone: dto.phone,

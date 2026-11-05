@@ -9,6 +9,7 @@ async function bootstrap() {
   
   app.setGlobalPrefix('api'); //coloca /api no começo das rotas
   app.useGlobalPipes(new ValidationPipe()); //ativa validação dos dados recebidos
+  app.enableCors({ origin: process.env.FRONTEND_URL ?? 'http://localhost:3001' });
 
   await app.listen(process.env.PORT ?? 3000); //começa a receber requisições na porta 3000
   

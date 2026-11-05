@@ -18,7 +18,10 @@ export class UsersService {
   }
 
   findById(id: number) {
-    return this.prisma.user.findUnique({ where: { id }, select: { id: true } });
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: { id: true, accountType: true },
+    });
   }
 
   async createUser(dto: CreateUserDto) {
@@ -37,12 +40,14 @@ export class UsersService {
         name: dto.name,
         email: dto.email,
         passwordHash,
+        accountType: dto.accountType,
       },
       select: {
         id: true,
         name: true,
         email: true,
         createdAt: true,
+        accountType: true,
       },
     });
   }
@@ -55,6 +60,7 @@ export class UsersService {
         name: true,
         email: true,
         createdAt: true,
+        accountType: true,
       },
       orderBy: {
         name: 'asc',
@@ -94,6 +100,7 @@ export class UsersService {
         name: true,
         email: true,
         createdAt: true,
+        accountType: true,
       },
     });
   }

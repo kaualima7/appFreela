@@ -51,13 +51,15 @@ export class PaymentsService {
     return this.formatResponse(payment);
   }
 
-  async findAll(projectId: number, userId: number) {
-    if (projectId <= 0 || projectId > 2147483647)
-      throw new BadRequestException('projectId inválido.');
-    const project = await this.prisma.project.findFirst({
-      where: { id: projectId, client: { userId } },
-    });
-    if (!project) throw new BadRequestException('Projeto não existe.');
+  async findAll(projectId: number | undefined, userId: number) {
+    if (projectId !== undefined) {
+      if (projectId <= 0 || projectId > 2147483647)
+        throw new BadRequestException('projectId inválido.');
+      const project = await this.prisma.project.findFirst({
+        where: { id: projectId, client: { userId } },
+      });
+      if (!project) throw new BadRequestException('Projeto não existe.');
+    }
     const payments = await this.prisma.payment.findMany({
       where: { projectId, project: { client: { userId } } },
       orderBy: { dueDate: 'asc' },

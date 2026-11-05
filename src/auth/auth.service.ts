@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { LoginDto } from '../dtos/login.dto';
+import type { AccountType } from '../generated/prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -12,10 +13,20 @@ export class AuthService {
     private readonly users: UsersService,
   ) {}
 
-  private async tokenFor(user: { id: number; name: string; email: string }) {
+  private async tokenFor(user: {
+    id: number;
+    name: string;
+    email: string;
+    accountType: AccountType;
+  }) {
     return {
       access_token: await this.jwt.signAsync({ sub: user.id }),
-      user: { id: user.id, name: user.name, email: user.email },
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        accountType: user.accountType,
+      },
     };
   }
 

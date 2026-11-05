@@ -8,6 +8,8 @@ import { ProfilesModule } from './profiles/profiles.module';
 import { ClientsModule } from './clients/clients.module';
 import { ProjectsModule } from './projects/projects.module';
 import { PaymentsModule } from './payments/payments.module';
+import { ServicesModule } from './services/services.module';
+import { ClientPortalModule } from './client-portal/client-portal.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { PaymentsModule } from './payments/payments.module';
     ClientsModule,
     ProjectsModule,
     PaymentsModule,
+    ServicesModule,
+    ClientPortalModule,
   ], //outros módulos
   controllers: [AppController], //quem recebe requisições http
   providers: [AppService], //serviços/lógica da aplicação

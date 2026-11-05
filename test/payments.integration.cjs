@@ -1,30 +1,16 @@
 // Execute após npm run build: node test/payments.integration.cjs
-// Usa apenas uma cópia temporária do banco de desenvolvimento.
+// Usa um banco temporário criado pelas migrations.
 require('reflect-metadata');
 const assert = require('node:assert/strict');
-const fs = require('node:fs/promises');
-const path = require('node:path');
-const os = require('node:os');
-const SQLite = require('better-sqlite3');
+const { createTestDatabase } = require('./test-database.cjs');
 const { NestFactory } = require('@nestjs/core');
 const { ValidationPipe } = require('@nestjs/common');
 
 async function main() {
-  const sourcePath = path.resolve(__dirname, '../dev.db');
-  const original = await fs.readFile(sourcePath);
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'freela-payment-test-'));
-  const database = path.join(dir, 'test.db');
-  const previousUrl = process.env.DATABASE_URL;
+  const testDatabase = await createTestDatabase();
   let app;
   const connections = [];
   try {
-    const source = new SQLite(sourcePath, { readonly: true });
-    try {
-      await source.backup(database);
-    } finally {
-      source.close();
-    }
-    process.env.DATABASE_URL = 'file:' + database.replaceAll('\\', '/');
     const { AppModule } = require('../dist/app.module');
     const { PrismaService } = require('../dist/database/prisma.service');
     app = await NestFactory.create(AppModule, {
@@ -128,8 +114,8 @@ async function main() {
       (await request('GET', `?projectId=${other.id}`, undefined, 200)).length,
       0,
     );
+    assert.equal((await request('GET', '', undefined, 200)).length, 1);
     for (const route of [
-      '',
       '?projectId=abc',
       '?projectId=0',
       '?projectId=2147483647',
@@ -220,13 +206,8 @@ async function main() {
       connections.map((connection) => connection.$disconnect()),
     );
     if (app) await app.close();
-    if (previousUrl === undefined) delete process.env.DATABASE_URL;
-    else process.env.DATABASE_URL = previousUrl;
-    for (const entry of await fs.readdir(dir))
-      await fs.unlink(path.join(dir, entry));
-    await fs.rmdir(dir);
-    assert.deepEqual(await fs.readFile(sourcePath), original);
-    console.log('Banco temporario removido; dev.db permaneceu identico.');
+    await testDatabase.cleanup();
+    console.log('Banco temporário removido; nenhum banco local foi utilizado.');
   }
 }
 main().catch((error) => {

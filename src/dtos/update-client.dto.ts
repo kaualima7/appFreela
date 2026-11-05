@@ -1,6 +1,21 @@
-import { IsEmail, IsOptional, IsString, Length, MaxLength } from 'class-validator';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  Length,
+  MaxLength,
+  IsInt,
+  IsPositive,
+  Max,
+} from 'class-validator';
 
 export class UpdateClientDto {
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  @Max(2147483647)
+  clientUserId?: number | null;
+
   @IsOptional()
   @IsString()
   @Length(2, 120)

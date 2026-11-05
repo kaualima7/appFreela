@@ -14,7 +14,9 @@ import { CreatePaymentDto } from '../dtos/create-payment.dto';
 import { UpdatePaymentDto } from '../dtos/update-payment.dto';
 import { PaymentsService } from './payments.service';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';
+import { AccountTypes } from '../auth/account-types.decorator';
 
+@AccountTypes('FREELANCER')
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly service: PaymentsService) {}
@@ -26,10 +28,11 @@ export class PaymentsController {
 
   @Get()
   findAll(
-    @Query('projectId', ParseIntPipe) parentId: number,
+    @Query('projectId', new ParseIntPipe({ optional: true }))
+    projectId: number | undefined,
     @Req() request: AuthenticatedRequest,
   ) {
-    return this.service.findAll(parentId, request.user.sub);
+    return this.service.findAll(projectId, request.user.sub);
   }
 
   @Get(':id')

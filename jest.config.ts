@@ -13,11 +13,14 @@ const paths = tsconfig?.compilerOptions?.paths ?? {};
 const config: Config = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '.',
-  testRegex: '.*\\.spec\\.ts$',
+  testRegex: '.*[.-]spec\\.ts$',
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
-  moduleNameMapper: pathsToModuleNameMapper(paths, { prefix: '<rootDir>/' }),
+  moduleNameMapper: {
+    ...pathsToModuleNameMapper(paths, { prefix: '<rootDir>/' }),
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
   collectCoverageFrom: [
     'src/**/*.(t|j)s',
     'libs/**/*.(t|j)s',

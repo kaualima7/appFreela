@@ -5,7 +5,15 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "allowScripts": {
+    "better-sqlite3": true,
+    "@prisma/engines": true,
+    "prisma": true
+  },
   "scripts": {
+    "prisma:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "test:integration": "npm run build && node test/migrations.integration.cjs && node test/auth.integration.cjs && node test/projects.integration.cjs && node test/payments.integration.cjs && node test/marketplace.integration.cjs",
     "build": "nest build",
     "deploy": "nest deploy",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

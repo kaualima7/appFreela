@@ -14,7 +14,9 @@ import { CreateProjectDto } from '../dtos/create-project.dto';
 import { UpdateProjectDto } from '../dtos/update-project.dto';
 import { ProjectsService } from './projects.service';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';
+import { AccountTypes } from '../auth/account-types.decorator';
 
+@AccountTypes('FREELANCER')
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly service: ProjectsService) {}
@@ -26,10 +28,11 @@ export class ProjectsController {
 
   @Get()
   findAll(
-    @Query('clientId', ParseIntPipe) parentId: number,
+    @Query('clientId', new ParseIntPipe({ optional: true }))
+    clientId: number | undefined,
     @Req() request: AuthenticatedRequest,
   ) {
-    return this.service.findAll(parentId, request.user.sub);
+    return this.service.findAll(clientId, request.user.sub);
   }
 
   @Get(':id')

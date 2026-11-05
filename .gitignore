@@ -40,6 +40,8 @@ lerna-debug.log*
 
 # dotenv environment variable files
 .env
+.env.*
+!.env.example
 .env.development.local
 .env.test.local
 .env.production.local
@@ -63,6 +65,8 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Banco SQLite local
 *.db
 *.db-journal
+*.db-wal
+*.db-shm
 
 # Prisma Client gerado
 /src/generated/prisma

@@ -13,7 +13,9 @@ import { CreateClientDto } from '../dtos/create-client.dto';
 import { UpdateClientDto } from '../dtos/update-client.dto';
 import { ClientsService } from './clients.service';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';
+import { AccountTypes } from '../auth/account-types.decorator';
 
+@AccountTypes('FREELANCER')
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly service: ClientsService) {}

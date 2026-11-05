@@ -4,8 +4,8 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
   moduleFormat = "cjs"
 }
 
@@ -13,65 +13,108 @@ datasource db {
   provider = "sqlite"
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String @unique
-  passwordHash String
-  createdAt     DateTime @default(now())
-  profile Profile?
-  clients Client[]
+enum AccountType {
+  FREELANCER
+  CLIENT
 }
 
-model Profile{
-  id        Int     @id @default(autoincrement())
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int     @unique
+model User {
+  id             Int               @id @default(autoincrement())
+  name           String
+  email          String            @unique
+  passwordHash   String
+  createdAt      DateTime          @default(now())
+  profile        Profile?
+  accountType    AccountType       @default(FREELANCER)
+  clients        Client[]          @relation("FreelancerContacts")
+  linkedContacts Client[]          @relation("ClientAccount")
+  services       Service[]
+  interests      ServiceInterest[]
+}
+
+model Profile {
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int       @unique
   fullName  String
-  birthDate DateTime? 
+  birthDate DateTime?
   avatarUrl String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Client {
-  id        Int     @id @default(autoincrement())
-  name      String
-  email     String?
-  phone     String?
-  company   String?
-  notes     String?
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime  @updatedAt
-  projects  Project[]
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String?
+  phone        String?
+  company      String?
+  notes        String?
+  user         User      @relation("FreelancerContacts", fields: [userId], references: [id], onDelete: Cascade)
+  userId       Int
+  clientUser   User?     @relation("ClientAccount", fields: [clientUserId], references: [id], onDelete: SetNull)
+  clientUserId Int?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  projects     Project[]
+
+  @@index([clientUserId])
+}
+
+model Service {
+  id            Int               @id @default(autoincrement())
+  freelancer    User              @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+  freelancerId  Int
+  title         String
+  description   String
+  category      String
+  startingPrice Decimal
+  imageUrl      String?
+  published     Boolean           @default(false)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  interests     ServiceInterest[]
+
+  @@index([freelancerId])
+  @@index([published, category])
+}
+
+model ServiceInterest {
+  id           Int      @id @default(autoincrement())
+  service      Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId    Int
+  clientUser   User     @relation(fields: [clientUserId], references: [id], onDelete: Cascade)
+  clientUserId Int
+  createdAt    DateTime @default(now())
+
+  @@unique([serviceId, clientUserId])
+  @@index([clientUserId])
 }
 
 model Project {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   title       String
   description String?
-  status      String   @default("PLANNED")
-  startDate   DateTime @default(now())
+  status      String    @default("PLANNED")
+  startDate   DateTime  @default(now())
   deadline    DateTime?
   value       Decimal
-  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId    Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   payments    Payment[]
 }
 
 model Payment {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   amount        Decimal
   dueDate       DateTime
   paidAt        DateTime?
   paymentMethod String?
-  status        String   @default("PENDING")
-  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  status        String    @default("PENDING")
+  project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId     Int
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
