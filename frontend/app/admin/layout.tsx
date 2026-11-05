@@ -15,7 +15,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             router.replace("/login");
             return;
         }
-        // Confere o token salvo no navegador depois que a página abre.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setAutenticado(true);
     }, [router]);

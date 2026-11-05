@@ -15,11 +15,8 @@ export default function LoginPage() {
     const [erro, setErro] = useState("");
 
     async function submitForm(event: FormEvent<HTMLFormElement>) {
-        //pause a submissao do form - nao atualiza a page
         event.preventDefault();
         setErro("");
-
-        //fazer uma request via http post para a api
        try {
        const resp = await fetch(`${API_URL}/auth/login`, {
             method: "POST",
@@ -34,7 +31,6 @@ export default function LoginPage() {
         }
         const dados = await resp.json();
         saveToken(dados.access_token);
-        //redirecionar
         router.replace("/admin");
        } catch {
            setErro("Não foi possível conectar à API. Verifique se o backend está ligado.");

@@ -9,8 +9,6 @@ import { Prisma } from '../generated/prisma/client';
 import { CreateServiceDto } from '../dtos/create-service.dto';
 import { UpdateServiceDto } from '../dtos/update-service.dto';
 import type { ServiceModel } from '../generated/prisma/models/Service';
-
-// O catálogo não divulga e-mail, nascimento ou informações internas do profissional.
 const publicServiceSelect = {
   id: true,
   title: true,
@@ -140,7 +138,6 @@ export class ServicesService {
 
   async withdrawInterest(serviceId: number, clientUserId: number) {
     this.validateId(serviceId);
-    // É possível retirar o interesse mesmo se o serviço foi despublicado.
     const removed = await this.prisma.serviceInterest.deleteMany({
       where: { serviceId, clientUserId },
     });

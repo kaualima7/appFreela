@@ -5,8 +5,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { Prisma } from '../generated/prisma/client';
-
-// O contato e suas notas pertencem ao freelancer e não fazem parte destas respostas.
 const clientProjectSelect = {
   id: true,
   title: true,

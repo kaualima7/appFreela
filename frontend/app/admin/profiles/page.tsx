@@ -38,8 +38,6 @@ export default function Profiles() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-
-    // Só mostra na seleção quem ainda não tem perfil.
     const availableUsers = users.filter((user) => !profiles.some((profile) => profile.userId === user.id));
     const canCreate = availableUsers.length > 0;
 
@@ -205,7 +203,6 @@ export default function Profiles() {
                                 <tr key={profile.id}>
                                     <td>
                                         {profile.avatarUrl ? (
-                                            // O avatar vem do link preenchido no formulário.
                                             // eslint-disable-next-line @next/next/no-img-element
                                             <img key={profile.avatarUrl} src={profile.avatarUrl} alt={`Avatar de ${profile.fullName}`} width={48} height={48} className="rounded-circle object-fit-cover" onError={(event) => { event.currentTarget.hidden = true; }} />
                                         ) : <span className="text-secondary small">Sem avatar</span>}
