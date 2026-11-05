@@ -1,0 +1,224 @@
+:root {
+  --freelike-blue: #24588c;
+  --freelike-border: #dfe5ec;
+  --freelike-background: #f6f8fb;
+  --bs-body-color: #253449;
+  --bs-secondary-color: #5e6d7e;
+  --bs-primary-rgb: 36, 88, 140;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--freelike-background);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--freelike-blue);
+  --bs-btn-border-color: var(--freelike-blue);
+  --bs-btn-hover-bg: #1c4670;
+  --bs-btn-hover-border-color: #1c4670;
+  --bs-btn-active-bg: #183c60;
+  --bs-btn-active-border-color: #183c60;
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--freelike-blue);
+  --bs-btn-border-color: var(--freelike-border);
+  --bs-btn-hover-bg: var(--freelike-blue);
+  --bs-btn-hover-border-color: var(--freelike-blue);
+  --bs-btn-active-bg: #183c60;
+  --bs-btn-active-border-color: #183c60;
+}
+
+.btn {
+  --bs-btn-padding-x: 1.1rem;
+  --bs-btn-padding-y: 0.6rem;
+  --bs-btn-border-radius: 0.4rem;
+  font-weight: 600;
+}
+
+.site-header {
+  background: #fff;
+  border-bottom: 1px solid var(--freelike-border);
+}
+
+.brand {
+  gap: 0.15rem;
+  color: #243e5b;
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -0.07rem;
+  text-decoration: none;
+}
+
+.brand-dot {
+  color: var(--freelike-blue);
+}
+.account-links {
+  text-align: right;
+}
+.account-links p {
+  font-size: 0.75rem;
+}
+
+.skip-link {
+  position: absolute;
+  top: -5rem;
+  left: 1rem;
+  z-index: 10;
+  background: #fff;
+  padding: 0.75rem;
+}
+
+.skip-link:focus {
+  top: 0.5rem;
+}
+
+.catalog-main {
+  padding-top: 3.5rem;
+  padding-bottom: 4rem;
+}
+.catalog-main:focus {
+  outline: none;
+}
+.catalog-intro h1 {
+  font-size: clamp(1.7rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.05rem;
+}
+.section-label {
+  color: var(--freelike-blue);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12rem;
+}
+
+.service-count,
+.service-category {
+  border-radius: 0.3rem;
+  background: #edf2f8;
+  color: #315b84;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.catalog-state {
+  border: 1px solid var(--freelike-border);
+  border-radius: 0.65rem;
+  background: #fff;
+  padding: 4rem 1.5rem;
+}
+
+.state-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.75rem;
+  background: #edf2f8;
+  color: var(--freelike-blue);
+  font-size: 1.4rem;
+}
+
+.service-card {
+  border: 1px solid var(--freelike-border);
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+.service-image {
+  aspect-ratio: 8 / 5;
+  background: #edf1f6;
+  border-bottom: 1px solid var(--freelike-border);
+}
+.service-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.image-placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: #64768a;
+  font-size: 0.8rem;
+}
+.image-placeholder i {
+  font-size: 2rem;
+  color: #8d9fb2;
+}
+.service-title {
+  font-size: 1.1rem;
+  line-height: 1.45;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.service-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  line-height: 1.6;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+.professional-initial {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  background: #edf2f8;
+  color: #315b84;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.professional-name {
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+.service-price {
+  border-top: 1px solid var(--freelike-border);
+}
+.service-price strong {
+  font-size: 1.15rem;
+  color: #253e59;
+}
+.site-footer {
+  border-top: 1px solid var(--freelike-border);
+  color: #657486;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 575px) {
+  .catalog-main {
+    padding-top: 2rem;
+    padding-bottom: 2.5rem;
+  }
+  .brand {
+    font-size: 1.4rem;
+  }
+  .brand img {
+    width: 40px;
+    height: 40px;
+  }
+  .account-links .btn {
+    font-size: 0.85rem;
+    --bs-btn-padding-x: 0.7rem;
+  }
+  .catalog-state {
+    padding: 3rem 1.25rem;
+  }
+}
