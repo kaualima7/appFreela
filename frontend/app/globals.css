@@ -322,3 +322,60 @@ body {
     min-height: auto;
   }
 }
+.service-status {
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.service-status.published {
+  color: #246441;
+  background: #eaf5ee;
+}
+.service-status.draft {
+  color: #566171;
+  background: #eef0f3;
+}
+.service-dialog {
+  width: min(640px, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--freelike-border);
+  border-radius: 0.65rem;
+  color: var(--bs-body-color);
+  background: #fff;
+}
+.service-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.service-dialog::backdrop {
+  background: #172b4280;
+}
+.dialog-heading {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--freelike-border);
+}
+.dialog-content {
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+.dialog-content .form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.dialog-actions {
+  border-top: 1px solid var(--freelike-border);
+  padding-top: 1.25rem;
+}
+@media (max-width: 575px) {
+  .service-dialog {
+    width: calc(100% - 1rem);
+    max-height: calc(100dvh - 1rem);
+  }
+  .dialog-heading,
+  .dialog-content {
+    padding: 1.1rem;
+  }
+}

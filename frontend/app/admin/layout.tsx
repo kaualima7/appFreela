@@ -11,7 +11,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     <SessionGate access="FREELANCER">
       <Header contentId="account-content" />
       <main id="account-content" className="container py-5" tabIndex={-1}>
-        {pathname !== "/admin" && (
+        {["/admin/users", "/admin/profiles"].includes(pathname) && (
           <div className="alert alert-warning" role="note">
             Exemplo da aula. Esta tela ainda não foi adaptada ao fluxo do
             Freelike.

@@ -14,3 +14,16 @@ export type PublicService = {
     } | null;
   };
 };
+
+export type FreelancerService = {
+  id: number;
+  freelancerId: number;
+  title: string;
+  description: string;
+  category: string;
+  startingPrice: string;
+  imageUrl: string | null;
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
+};

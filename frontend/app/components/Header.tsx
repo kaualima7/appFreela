@@ -60,6 +60,14 @@ export default function Header({
             </>
           ) : user ? (
             <>
+              {user.accountType === "FREELANCER" && (
+                <Link
+                  href="/admin/services"
+                  className="btn btn-outline-primary"
+                >
+                  Meus serviços
+                </Link>
+              )}
               <Link
                 href={accountHome(user.accountType)}
                 className="btn btn-outline-primary"

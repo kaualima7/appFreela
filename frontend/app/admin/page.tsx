@@ -14,11 +14,16 @@ export default function Admin() {
         Tipo de conta: <strong>Freelancer</strong>
       </p>
       <p className="text-secondary">
-        A gestão dos seus serviços será disponibilizada em uma próxima etapa.
+        Publique serviços na vitrine e gerencie seus rascunhos.
       </p>
-      <Link href="/" className="btn btn-outline-primary align-self-start mt-2">
-        Voltar à vitrine
-      </Link>
+      <div className="d-flex flex-wrap gap-2 mt-2">
+        <Link href="/admin/services" className="btn btn-primary">
+          Meus serviços
+        </Link>
+        <Link href="/" className="btn btn-outline-primary">
+          Voltar à vitrine
+        </Link>
+      </div>
     </section>
   );
 }

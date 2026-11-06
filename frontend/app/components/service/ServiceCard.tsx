@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
 import type { PublicService } from "@/app/types/service";
+import ServiceImage from "./ServiceImage";
 
 const priceFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -10,30 +9,12 @@ const priceFormatter = new Intl.NumberFormat("pt-BR", {
 });
 
 export default function ServiceCard({ service }: { service: PublicService }) {
-  const [imageFailed, setImageFailed] = useState(false);
   const professionalName =
     service.freelancer.profile?.fullName || service.freelancer.name;
 
   return (
     <article className="card service-card h-100">
-      <div className="service-image">
-        {service.imageUrl && !imageFailed ? (
-          <Image
-            src={service.imageUrl}
-            alt={service.title}
-            width={720}
-            height={450}
-            className="service-photo"
-            unoptimized
-            onError={() => setImageFailed(true)}
-          />
-        ) : (
-          <div className="image-placeholder">
-            <i className="bi bi-image" aria-hidden="true" />
-            <span>Serviço sem imagem</span>
-          </div>
-        )}
-      </div>
+      <ServiceImage title={service.title} imageUrl={service.imageUrl} />
       <div className="card-body d-flex flex-column p-4">
         <span className="service-category align-self-start mb-3">
           {service.category}
