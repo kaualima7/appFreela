@@ -1,11 +1,20 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { accountHome, logout } from "@/app/login/auth_service";
+import { useSession } from "./SessionProvider";
 
-export default function Header() {
+export default function Header({
+  contentId = "services",
+}: {
+  contentId?: string;
+}) {
+  const { user, checking, error, retry } = useSession();
   return (
     <header className="site-header">
-      <a href="#services" className="skip-link">
-        Pular para os serviços
+      <a href={`#${contentId}`} className="skip-link">
+        Pular para o conteúdo
       </a>
       <nav
         className="container py-3 d-flex flex-wrap align-items-center justify-content-between gap-3"
@@ -21,32 +30,60 @@ export default function Header() {
             alt=""
             width={48}
             height={48}
-            priority
+            loading="eager"
           />
           <span>
             Freelike<span className="brand-dot">.</span>
           </span>
         </Link>
-        <div className="account-links">
-          <div className="d-flex justify-content-end gap-2">
-            <Link
-              href="/login"
-              className="btn btn-outline-primary"
-              aria-describedby="account-notice"
-            >
-              Entrar
-            </Link>
-            <Link
-              href="/register"
-              className="btn btn-primary"
-              aria-describedby="account-notice"
-            >
-              Criar conta
-            </Link>
-          </div>
-          <p id="account-notice" className="small text-secondary mb-0 mt-2">
-            Acesso e cadastro em preparação.
-          </p>
+        <div className="account-links d-flex flex-wrap align-items-center justify-content-end gap-2">
+          {checking ? (
+            <span className="small text-secondary" role="status">
+              Verificando sessão...
+            </span>
+          ) : error ? (
+            <>
+              <button
+                type="button"
+                className="btn btn-outline-primary"
+                onClick={retry}
+              >
+                Verificar sessão
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={logout}
+              >
+                Sair
+              </button>
+            </>
+          ) : user ? (
+            <>
+              <Link
+                href={accountHome(user.accountType)}
+                className="btn btn-outline-primary"
+              >
+                Minha área
+              </Link>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={logout}
+              >
+                Sair
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="btn btn-outline-primary">
+                Entrar
+              </Link>
+              <Link href="/register" className="btn btn-primary">
+                Criar conta
+              </Link>
+            </>
+          )}
         </div>
       </nav>
     </header>

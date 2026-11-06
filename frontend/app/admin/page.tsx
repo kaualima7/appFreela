@@ -1,17 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "@/app/components/SessionProvider";
 
 export default function Admin() {
-
-    return (
-        <div className="container py-4">
-            <h1 className="h3 mb-3">Administração</h1>
-            <p>Selecione o cadastro que deseja acessar.</p>
-            <div className="d-flex flex-wrap gap-3">
-                <Link href="/admin/users" className="btn btn-outline-primary">Gerenciar usuários</Link>
-                <Link href="/admin/profiles" className="btn btn-outline-primary">Gerenciar perfis</Link>
-            </div>
-        </div>
-    );
+  const { user } = useSession();
+  if (!user) return null;
+  return (
+    <section className="account-home card card-body p-4 p-md-5">
+      <p className="section-label">ÁREA DO FREELANCER</p>
+      <h1 className="h3 fw-bold mb-3">Olá, {user.name}.</h1>
+      <p className="text-secondary mb-4">
+        Tipo de conta: <strong>Freelancer</strong>
+      </p>
+      <p className="text-secondary">
+        A gestão dos seus serviços será disponibilizada em uma próxima etapa.
+      </p>
+      <Link href="/" className="btn btn-outline-primary align-self-start mt-2">
+        Voltar à vitrine
+      </Link>
+    </section>
+  );
 }

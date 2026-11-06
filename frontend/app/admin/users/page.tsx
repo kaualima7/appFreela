@@ -1,6 +1,6 @@
 "use client";
 
-import { getToken } from "@/app/login/auth_service";
+import { getToken, authenticatedFetch } from "@/app/login/auth_service";
 import { useEffect, useState, type FormEvent } from "react";
 import { API_URL, responseError } from "@/app/api";
 
@@ -33,7 +33,7 @@ export default function Users() {
         if (!window.confirm("Excluir este usuário? O perfil vinculado também será excluído.")) return;
         setError("");
         try {
-        const response = await fetch(`${API}/${userId}`, {
+        const response = await authenticatedFetch(`${API}/${userId}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${getToken()}`,
@@ -49,7 +49,7 @@ export default function Users() {
 
     async function load() {
         try {
-            const response = await fetch(API, {
+            const response = await authenticatedFetch(API, {
                 headers: { Authorization: `Bearer ${getToken()}` },
             });
             if (!response.ok)
@@ -65,7 +65,7 @@ export default function Users() {
         setSaving(true);
         setError("");
         try {
-        const response = await fetch(id === null ? API : `${API}/${id}`, {
+        const response = await authenticatedFetch(id === null ? API : `${API}/${id}`, {
             method: id === null ? "POST" : "PUT",
             headers: {
                 "Content-Type": "application/json",

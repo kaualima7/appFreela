@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { API_URL, responseError } from "@/app/api";
-import { getToken } from "@/app/login/auth_service";
+import { getToken, authenticatedFetch } from "@/app/login/auth_service";
 
 type User = { id: number; name: string; email: string };
 type Profile = {
@@ -18,8 +18,8 @@ type Profile = {
 async function fetchData(signal?: AbortSignal): Promise<[User[], Profile[]]> {
     const options = { headers: { Authorization: `Bearer ${getToken()}` }, signal };
     const [usersResponse, profilesResponse] = await Promise.all([
-        fetch(`${API_URL}/users`, options),
-        fetch(`${API_URL}/profiles`, options),
+        authenticatedFetch(`${API_URL}/users`, options),
+        authenticatedFetch(`${API_URL}/profiles`, options),
     ]);
     if (!usersResponse.ok) throw new Error(await responseError(usersResponse, "Não foi possível carregar os usuários."));
     if (!profilesResponse.ok) throw new Error(await responseError(profilesResponse, "Não foi possível carregar os perfis."));
@@ -104,7 +104,7 @@ export default function Profiles() {
                 avatarUrl: avatarUrl.trim() || null,
                 ...(id === null ? { userId: Number(userId) } : {}),
             };
-            const response = await fetch(`${API_URL}/profiles${id === null ? "" : `/${id}`}`, {
+            const response = await authenticatedFetch(`${API_URL}/profiles${id === null ? "" : `/${id}`}`, {
                 method: id === null ? "POST" : "PUT",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
                 body: JSON.stringify(data),
@@ -126,7 +126,7 @@ export default function Profiles() {
         setError("");
         setSuccess("");
         try {
-            const response = await fetch(`${API_URL}/profiles/${profile.id}`, {
+            const response = await authenticatedFetch(`${API_URL}/profiles/${profile.id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${getToken()}` },
             });
