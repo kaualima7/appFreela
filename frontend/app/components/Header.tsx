@@ -68,6 +68,14 @@ export default function Header({
                   Meus serviços
                 </Link>
               )}
+              {user.accountType === "CLIENT" && (
+                <Link
+                  href="/client/interests"
+                  className="btn btn-outline-primary"
+                >
+                  Meus interesses
+                </Link>
+              )}
               <Link
                 href={accountHome(user.accountType)}
                 className="btn btn-outline-primary"

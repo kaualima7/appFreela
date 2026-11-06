@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./globals.css";
 import SessionProvider from "./components/SessionProvider";
+import InterestsProvider from "./components/InterestsProvider";
 
 export const metadata: Metadata = {
   title: "Freelike | Vitrine de serviços",
@@ -14,7 +15,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" data-scroll-behavior="smooth">
       <body>
-        <SessionProvider>{children}</SessionProvider>
+        <SessionProvider>
+          <InterestsProvider>{children}</InterestsProvider>
+        </SessionProvider>
       </body>
     </html>
   );

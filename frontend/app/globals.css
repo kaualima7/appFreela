@@ -379,3 +379,13 @@ body {
     padding: 1.1rem;
   }
 }
+.interested-clients li + li {
+  border-top: 1px solid var(--freelike-border);
+}
+.interested-clients .contact-email {
+  color: var(--freelike-blue);
+  overflow-wrap: anywhere;
+}
+.like-action .btn {
+  font-size: 0.9rem;
+}

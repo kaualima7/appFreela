@@ -5,8 +5,16 @@ import { API_URL } from "./api";
 import Header from "./components/Header";
 import ServiceCard from "./components/service/ServiceCard";
 import type { PublicService } from "./types/service";
+import { useSession } from "./components/SessionProvider";
+import { useInterests } from "./components/InterestsProvider";
 
 export default function Home() {
+  const { user } = useSession();
+  const {
+    loading: interestsLoading,
+    error: interestsError,
+    reload: reloadInterests,
+  } = useInterests();
   const [services, setServices] = useState<PublicService[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -74,6 +82,25 @@ export default function Home() {
           </p>
         </div>
 
+        {user?.accountType === "CLIENT" &&
+          (interestsLoading ? (
+            <p className="small text-secondary" role="status">
+              Carregando seus likes...
+            </p>
+          ) : interestsError ? (
+            <div className="alert alert-warning" role="alert">
+              <p className="mb-2">
+                {interestsError} Os serviços continuam disponíveis.
+              </p>
+              <button
+                type="button"
+                className="btn btn-outline-primary btn-sm"
+                onClick={reloadInterests}
+              >
+                Tentar carregar likes novamente
+              </button>
+            </div>
+          ) : null)}
         <section aria-label="Serviços publicados" aria-busy={loading}>
           {loading ? (
             <div className="catalog-state text-center" role="status">

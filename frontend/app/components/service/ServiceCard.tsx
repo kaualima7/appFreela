@@ -2,13 +2,20 @@
 
 import type { PublicService } from "@/app/types/service";
 import ServiceImage from "./ServiceImage";
+import LikeButton from "./LikeButton";
 
 const priceFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
 });
 
-export default function ServiceCard({ service }: { service: PublicService }) {
+export default function ServiceCard({
+  service,
+  unavailable = false,
+}: {
+  service: PublicService;
+  unavailable?: boolean;
+}) {
   const professionalName =
     service.freelancer.profile?.fullName || service.freelancer.name;
 
@@ -19,6 +26,11 @@ export default function ServiceCard({ service }: { service: PublicService }) {
         <span className="service-category align-self-start mb-3">
           {service.category}
         </span>
+        {unavailable && (
+          <span className="service-status draft align-self-start mb-3">
+            Serviço indisponível
+          </span>
+        )}
         <h2 className="service-title h5">{service.title}</h2>
         <p className="service-description text-secondary mb-4">
           {service.description}
@@ -36,6 +48,7 @@ export default function ServiceCard({ service }: { service: PublicService }) {
               {priceFormatter.format(Number(service.startingPrice))}
             </strong>
           </div>
+          <LikeButton service={service} onlyWithdraw={unavailable} />
         </div>
       </div>
     </article>

@@ -7,6 +7,7 @@ import type { FreelancerService } from "@/app/types/service";
 import ManagedServiceCard from "@/app/components/service/ManagedServiceCard";
 import ServiceFormDialog from "@/app/components/service/ServiceFormDialog";
 import ServiceDialog from "@/app/components/service/ServiceDialog";
+import InterestedClientsDialog from "@/app/components/service/InterestedClientsDialog";
 
 export default function MyServices() {
   const [services, setServices] = useState<FreelancerService[]>([]);
@@ -21,6 +22,8 @@ export default function MyServices() {
     useState<FreelancerService | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const [interestedService, setInterestedService] =
+    useState<FreelancerService | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -192,6 +195,7 @@ export default function MyServices() {
                   service={service}
                   onEdit={editService}
                   onDelete={confirmDelete}
+                  onViewInterests={setInterestedService}
                 />
               </div>
             ))}
@@ -209,6 +213,12 @@ export default function MyServices() {
             );
             reload();
           }}
+        />
+      )}
+      {interestedService && (
+        <InterestedClientsDialog
+          service={interestedService}
+          onClose={() => setInterestedService(null)}
         />
       )}
       {serviceToDelete && (

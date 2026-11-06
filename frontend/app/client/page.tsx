@@ -14,12 +14,17 @@ export default function Client() {
         Tipo de conta: <strong>Cliente</strong>
       </p>
       <p className="text-secondary">
-        Explore os serviços publicados na vitrine. A opção de demonstrar
-        interesse será disponibilizada em uma próxima etapa.
+        Explore os serviços na vitrine e acompanhe aqueles em que você
+        demonstrou interesse.
       </p>
-      <Link href="/" className="btn btn-outline-primary align-self-start mt-2">
-        Voltar à vitrine
-      </Link>
+      <div className="d-flex flex-wrap gap-2 mt-2">
+        <Link href="/client/interests" className="btn btn-primary">
+          Meus interesses
+        </Link>
+        <Link href="/" className="btn btn-outline-primary">
+          Voltar à vitrine
+        </Link>
+      </div>
     </section>
   );
 }

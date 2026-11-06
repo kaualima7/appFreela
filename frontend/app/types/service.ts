@@ -27,3 +27,17 @@ export type FreelancerService = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type ClientInterest = {
+  id: number;
+  serviceId: number;
+  createdAt: string;
+  service: PublicService & { published: boolean };
+};
+
+export type InterestedClient = {
+  id: number;
+  serviceId: number;
+  createdAt: string;
+  clientUser: { id: number; name: string; email: string };
+};

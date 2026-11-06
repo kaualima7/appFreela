@@ -10,10 +10,12 @@ export default function ManagedServiceCard({
   service,
   onEdit,
   onDelete,
+  onViewInterests,
 }: {
   service: FreelancerService;
   onEdit: (service: FreelancerService) => void;
   onDelete: (service: FreelancerService) => void;
+  onViewInterests: (service: FreelancerService) => void;
 }) {
   return (
     <article className="card service-card h-100">
@@ -53,6 +55,14 @@ export default function ManagedServiceCard({
               Excluir
             </button>
           </div>
+          <button
+            type="button"
+            className="btn btn-outline-primary w-100 mt-2"
+            aria-label={`Ver interessados em ${service.title}`}
+            onClick={() => onViewInterests(service)}
+          >
+            Ver interessados
+          </button>
         </div>
       </div>
     </article>

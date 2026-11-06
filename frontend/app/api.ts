@@ -19,3 +19,12 @@ export async function serviceError(response: Response, fallback: string) {
     return "Confira os campos informados. Use uma URL de imagem HTTP ou HTTPS válida.";
   return responseError(response, fallback);
 }
+
+export async function interestError(response: Response, fallback: string) {
+  if (response.status === 403)
+    return "Sua conta não tem permissão para esta operação.";
+  if (response.status === 404)
+    return "Serviço ou interesse indisponível. Atualize a lista.";
+  if (response.status >= 500) return fallback;
+  return responseError(response, fallback);
+}
