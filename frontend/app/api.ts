@@ -1,6 +1,17 @@
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
 
+export async function managementError(response: Response) {
+  if (response.status === 401) return "Sua sessão expirou. Entre novamente.";
+  if (response.status === 403)
+    return "Sua conta não tem permissão para esta operação.";
+  if (response.status === 404)
+    return "Registro não encontrado ou indisponível para sua conta.";
+  if (response.status >= 500)
+    return "Não foi possível concluir. Tente novamente.";
+  return responseError(response, "Confira os campos e tente novamente.");
+}
+
 export async function responseError(
   response: Response,
   fallback: string,

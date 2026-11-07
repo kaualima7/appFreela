@@ -18,6 +18,9 @@ export default function Client() {
         demonstrou interesse.
       </p>
       <div className="d-flex flex-wrap gap-2 mt-2">
+        <Link href="/client/projects" className="btn btn-outline-primary">
+          Meus projetos
+        </Link>
         <Link href="/client/interests" className="btn btn-primary">
           Meus interesses
         </Link>

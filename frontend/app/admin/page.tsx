@@ -17,6 +17,12 @@ export default function Admin() {
         Publique serviços na vitrine e gerencie seus rascunhos.
       </p>
       <div className="d-flex flex-wrap gap-2 mt-2">
+        <Link href="/admin/clients" className="btn btn-outline-primary">
+          Clientes
+        </Link>
+        <Link href="/admin/projects" className="btn btn-outline-primary">
+          Projetos
+        </Link>
         <Link href="/admin/services" className="btn btn-primary">
           Meus serviços
         </Link>

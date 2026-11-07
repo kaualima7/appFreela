@@ -5,6 +5,8 @@ import { API_URL, interestError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
 import type { FreelancerService, InterestedClient } from "@/app/types/service";
 import ServiceDialog from "./ServiceDialog";
+import ClientFormDialog from "../ClientFormDialog";
+import type { ClientAccount } from "@/app/types/management";
 
 const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
   dateStyle: "short",
@@ -25,6 +27,10 @@ export default function InterestedClientsDialog({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [requestVersion, setRequestVersion] = useState(0);
+  const [clientAccount, setClientAccount] = useState<ClientAccount | null>(
+    null,
+  );
+  const [clientMessage, setClientMessage] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -71,6 +77,17 @@ export default function InterestedClientsDialog({
     };
   }, [service.id, requestVersion]);
 
+  if (clientAccount)
+    return (
+      <ClientFormDialog
+        account={clientAccount}
+        onClose={() => setClientAccount(null)}
+        onSaved={(contact) => {
+          setClientAccount(null);
+          setClientMessage(`Contato disponível em Clientes: ${contact.name}.`);
+        }}
+      />
+    );
   return (
     <ServiceDialog
       id="interested-clients"
@@ -79,6 +96,11 @@ export default function InterestedClientsDialog({
       onClose={onClose}
     >
       <p className="fw-semibold">{service.title}</p>
+      {clientMessage && (
+        <p className="alert alert-success" role="status">
+          {clientMessage}
+        </p>
+      )}
       {loading ? (
         <div className="text-center py-4" role="status">
           <span
@@ -122,6 +144,16 @@ export default function InterestedClientsDialog({
                   {dateFormatter.format(new Date(interest.createdAt))}
                 </time>
               </p>
+              <button
+                type="button"
+                className="btn btn-outline-primary mt-2"
+                onClick={() => {
+                  setClientMessage("");
+                  setClientAccount(interest.clientUser);
+                }}
+              >
+                Cadastrar como cliente
+              </button>
             </li>
           ))}
         </ul>

@@ -61,20 +61,42 @@ export default function Header({
           ) : user ? (
             <>
               {user.accountType === "FREELANCER" && (
-                <Link
-                  href="/admin/services"
-                  className="btn btn-outline-primary"
-                >
-                  Meus serviços
-                </Link>
+                <>
+                  <Link
+                    href="/admin/clients"
+                    className="btn btn-outline-primary"
+                  >
+                    Clientes
+                  </Link>
+                  <Link
+                    href="/admin/projects"
+                    className="btn btn-outline-primary"
+                  >
+                    Projetos
+                  </Link>
+                  <Link
+                    href="/admin/services"
+                    className="btn btn-outline-primary"
+                  >
+                    Meus serviços
+                  </Link>
+                </>
               )}
               {user.accountType === "CLIENT" && (
-                <Link
-                  href="/client/interests"
-                  className="btn btn-outline-primary"
-                >
-                  Meus interesses
-                </Link>
+                <>
+                  <Link
+                    href="/client/projects"
+                    className="btn btn-outline-primary"
+                  >
+                    Meus projetos
+                  </Link>
+                  <Link
+                    href="/client/interests"
+                    className="btn btn-outline-primary"
+                  >
+                    Meus interesses
+                  </Link>
+                </>
               )}
               <Link
                 href={accountHome(user.accountType)}
