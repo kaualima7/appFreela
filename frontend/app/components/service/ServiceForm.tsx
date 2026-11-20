@@ -4,9 +4,8 @@ import { useState, type FormEvent } from "react";
 import { API_URL, serviceError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
 import type { FreelancerService } from "@/app/types/service";
-import ServiceDialog from "./ServiceDialog";
 
-export default function ServiceFormDialog({
+export default function ServiceForm({
   service,
   onClose,
   onSaved,
@@ -101,12 +100,7 @@ export default function ServiceFormDialog({
   }
 
   return (
-    <ServiceDialog
-      id="service-form"
-      title={service ? "Editar serviço" : "Novo serviço"}
-      busy={saving}
-      onClose={onClose}
-    >
+    <div>
       {error && (
         <div className="alert alert-danger" role="alert">
           {error}
@@ -126,7 +120,6 @@ export default function ServiceFormDialog({
               minLength={2}
               maxLength={120}
               required
-              data-dialog-focus
             />
           </div>
           <div className="mb-3">
@@ -228,6 +221,6 @@ export default function ServiceFormDialog({
           </button>
         </div>
       </form>
-    </ServiceDialog>
+    </div>
   );
 }

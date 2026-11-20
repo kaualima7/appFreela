@@ -1,4 +1,5 @@
 import type { FreelancerService } from "@/app/types/service";
+import Link from "next/link";
 import ServiceImage from "./ServiceImage";
 
 const priceFormatter = new Intl.NumberFormat("pt-BR", {
@@ -8,12 +9,10 @@ const priceFormatter = new Intl.NumberFormat("pt-BR", {
 
 export default function ManagedServiceCard({
   service,
-  onEdit,
   onDelete,
   onViewInterests,
 }: {
   service: FreelancerService;
-  onEdit: (service: FreelancerService) => void;
   onDelete: (service: FreelancerService) => void;
   onViewInterests: (service: FreelancerService) => void;
 }) {
@@ -38,14 +37,13 @@ export default function ManagedServiceCard({
             </strong>
           </div>
           <div className="d-flex flex-wrap gap-2">
-            <button
-              type="button"
+            <Link
+              href={`/admin/services/${service.id}/edit`}
               className="btn btn-outline-primary flex-grow-1"
               aria-label={`Editar ${service.title}`}
-              onClick={() => onEdit(service)}
             >
               Editar
-            </button>
+            </Link>
             <button
               type="button"
               className="btn btn-outline-danger"

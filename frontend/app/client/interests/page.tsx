@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useInterests } from "@/app/components/InterestsProvider";
+import LikeButton from "@/app/components/service/LikeButton";
 import ServiceCard from "@/app/components/service/ServiceCard";
 
 export default function MyInterests() {
@@ -66,7 +67,9 @@ export default function MyInterests() {
               <ServiceCard
                 service={interest.service}
                 unavailable={!interest.service.published}
-              />
+              >
+                <LikeButton service={interest.service} onlyWithdraw />
+              </ServiceCard>
             </div>
           ))}
         </div>

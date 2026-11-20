@@ -2,7 +2,8 @@
 
 import type { PublicService } from "@/app/types/service";
 import ServiceImage from "./ServiceImage";
-import LikeButton from "./LikeButton";
+import Link from "next/link";
+import type { ReactNode } from "react";
 
 const priceFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -12,9 +13,11 @@ const priceFormatter = new Intl.NumberFormat("pt-BR", {
 export default function ServiceCard({
   service,
   unavailable = false,
+  children,
 }: {
   service: PublicService;
   unavailable?: boolean;
+  children?: ReactNode;
 }) {
   const professionalName =
     service.freelancer.profile?.fullName || service.freelancer.name;
@@ -48,7 +51,15 @@ export default function ServiceCard({
               {priceFormatter.format(Number(service.startingPrice))}
             </strong>
           </div>
-          <LikeButton service={service} onlyWithdraw={unavailable} />
+          {!unavailable && (
+            <Link
+              href={`/services/${service.id}`}
+              className="btn btn-outline-primary w-100 mt-3"
+            >
+              Ver serviço
+            </Link>
+          )}
+          {children}
         </div>
       </div>
     </article>

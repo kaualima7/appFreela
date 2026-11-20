@@ -5,7 +5,7 @@ import { API_URL, serviceError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
 import type { FreelancerService } from "@/app/types/service";
 import ManagedServiceCard from "@/app/components/service/ManagedServiceCard";
-import ServiceFormDialog from "@/app/components/service/ServiceFormDialog";
+import Link from "next/link";
 import ServiceDialog from "@/app/components/service/ServiceDialog";
 import InterestedClientsDialog from "@/app/components/service/InterestedClientsDialog";
 
@@ -15,9 +15,6 @@ export default function MyServices() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [requestVersion, setRequestVersion] = useState(0);
-  const [formOpen, setFormOpen] = useState(false);
-  const [editingService, setEditingService] =
-    useState<FreelancerService | null>(null);
   const [serviceToDelete, setServiceToDelete] =
     useState<FreelancerService | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -46,7 +43,14 @@ export default function MyServices() {
           .catch(() => null);
         if (!Array.isArray(ownServices))
           throw new Error("Não foi possível carregar seus serviços.");
-        if (active) setServices(ownServices);
+        if (active) {
+          setServices(ownServices);
+          const savedNotice = sessionStorage.getItem("service-save-notice");
+          if (savedNotice) {
+            setNotice(savedNotice);
+            sessionStorage.removeItem("service-save-notice");
+          }
+        }
       } catch (error) {
         if (active)
           setError(
@@ -73,18 +77,6 @@ export default function MyServices() {
     setLoading(true);
     setError("");
     setRequestVersion((previousVersion) => previousVersion + 1);
-  }
-
-  function newService() {
-    setNotice("");
-    setEditingService(null);
-    setFormOpen(true);
-  }
-
-  function editService(service: FreelancerService) {
-    setNotice("");
-    setEditingService(service);
-    setFormOpen(true);
   }
 
   function confirmDelete(service: FreelancerService) {
@@ -144,15 +136,13 @@ export default function MyServices() {
           >
             Atualizar
           </button>
-          <button
-            type="button"
+          <Link
+            href="/admin/services/new"
             className="btn btn-primary"
-            onClick={newService}
             data-dialog-return-focus
           >
-            <i className="bi bi-plus-lg me-2" aria-hidden="true" />
             Novo serviço
-          </button>
+          </Link>
         </div>
       </div>
       {notice && (
@@ -193,7 +183,6 @@ export default function MyServices() {
               <div key={service.id} className="col-12 col-md-6 col-lg-4">
                 <ManagedServiceCard
                   service={service}
-                  onEdit={editService}
                   onDelete={confirmDelete}
                   onViewInterests={setInterestedService}
                 />
@@ -202,19 +191,6 @@ export default function MyServices() {
           </div>
         )}
       </div>
-      {formOpen && (
-        <ServiceFormDialog
-          service={editingService}
-          onClose={() => setFormOpen(false)}
-          onSaved={() => {
-            setFormOpen(false);
-            setNotice(
-              editingService ? "Serviço atualizado." : "Serviço criado.",
-            );
-            reload();
-          }}
-        />
-      )}
       {interestedService && (
         <InterestedClientsDialog
           service={interestedService}
