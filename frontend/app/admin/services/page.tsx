@@ -1,5 +1,7 @@
 "use client";
 
+import RefreshButton from "@/app/components/RefreshButton";
+
 import { useEffect, useState } from "react";
 import { API_URL, serviceError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
@@ -121,26 +123,24 @@ export default function MyServices() {
         <div>
           <p className="section-label mb-2">ÁREA DO FREELANCER</p>
           <h1 id="my-services-title" className="h2 fw-bold mb-2">
-            Meus serviços
+            Meus anúncios
           </h1>
           <p className="text-secondary mb-0">
             Gerencie suas publicações e seus rascunhos.
           </p>
         </div>
-        <div className="d-flex flex-wrap gap-2">
-          <button
-            type="button"
-            className="btn btn-outline-primary"
+        <div className="workspace-actions d-flex flex-wrap gap-2">
+          <RefreshButton
+            label="Atualizar anúncios"
             onClick={reload}
-            disabled={loading}
-          >
-            Atualizar
-          </button>
+            loading={loading}
+          />
           <Link
             href="/admin/services/new"
             className="btn btn-primary"
             data-dialog-return-focus
           >
+            <i className="bi bi-plus-lg" aria-hidden="true" />
             Novo serviço
           </Link>
         </div>
@@ -213,7 +213,7 @@ export default function MyServices() {
             Excluir <strong>{serviceToDelete.title}</strong>?
           </p>
           <p className="text-secondary">
-            Os interesses associados também serão removidos. Esta ação não pode
+            Os likes deste anúncio também serão removidos. Esta ação não pode
             ser desfeita.
           </p>
           <div className="d-flex flex-wrap justify-content-end gap-2 dialog-actions">

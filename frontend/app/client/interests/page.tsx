@@ -1,5 +1,7 @@
 "use client";
 
+import RefreshButton from "@/app/components/RefreshButton";
+
 import Link from "next/link";
 import { useInterests } from "@/app/components/InterestsProvider";
 import LikeButton from "@/app/components/service/LikeButton";
@@ -13,20 +15,17 @@ export default function MyInterests() {
         <div>
           <p className="section-label mb-2">ÁREA DO CLIENTE</p>
           <h1 id="my-interests-title" className="h2 fw-bold mb-2">
-            Meus interesses
+            Meus likes
           </h1>
           <p className="text-secondary mb-0">Serviços em que você deu like.</p>
         </div>
         <div className="d-flex flex-wrap gap-2">
-          <button
-            type="button"
-            className="btn btn-outline-primary"
+          <RefreshButton
+            label="Atualizar likes"
             onClick={reload}
-            disabled={loading}
-          >
-            Atualizar
-          </button>
-          <Link href="/" className="btn btn-primary">
+            loading={loading}
+          />
+          <Link href="/explorar" className="btn btn-primary">
             Ver vitrine
           </Link>
         </div>
@@ -37,11 +36,11 @@ export default function MyInterests() {
             className="spinner-border text-primary mb-3"
             aria-hidden="true"
           />
-          <p className="text-secondary mb-0">Carregando seus interesses...</p>
+          <p className="text-secondary mb-0">Carregando seus likes...</p>
         </div>
       ) : error ? (
         <div className="catalog-state text-center" role="alert">
-          <h2 className="h5">Não foi possível carregar seus interesses</h2>
+          <h2 className="h5">Não foi possível carregar seus likes</h2>
           <p className="text-secondary">{error}</p>
           <button type="button" className="btn btn-primary" onClick={reload}>
             Tentar novamente
@@ -52,11 +51,11 @@ export default function MyInterests() {
           <span className="state-icon mb-3">
             <i className="bi bi-heart" aria-hidden="true" />
           </span>
-          <h2 className="h5">Você ainda não tem interesses</h2>
+          <h2 className="h5">Você ainda não deu nenhum like</h2>
           <p className="text-secondary mb-3">
             Explore a vitrine e dê like nos serviços que interessam a você.
           </p>
-          <Link href="/" className="btn btn-outline-primary">
+          <Link href="/explorar" className="btn btn-outline-primary">
             Explorar serviços
           </Link>
         </div>

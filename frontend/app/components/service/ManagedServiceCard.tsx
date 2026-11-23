@@ -56,10 +56,10 @@ export default function ManagedServiceCard({
           <button
             type="button"
             className="btn btn-outline-primary w-100 mt-2"
-            aria-label={`Ver interessados em ${service.title}`}
+            aria-label={`Ver quem deu like em ${service.title}`}
             onClick={() => onViewInterests(service)}
           >
-            Ver interessados
+            Ver quem deu like
           </button>
         </div>
       </div>

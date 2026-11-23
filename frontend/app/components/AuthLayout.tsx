@@ -18,7 +18,7 @@ export default function AuthLayout({
         <Link
           href="/"
           className="brand d-inline-flex align-items-center mb-4"
-          aria-label="Freelike, voltar à vitrine"
+          aria-label="Freelike, página inicial"
         >
           <Image
             src="/freelike-symbol.png"

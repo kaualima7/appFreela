@@ -87,7 +87,7 @@ export default function ClientFormDialog({
   return (
     <ServiceDialog
       id="client-form"
-      title={client ? "Editar cliente" : "Novo cliente"}
+      title={client ? "Editar contato" : "Adicionar contato"}
       busy={busy}
       onClose={onClose}
     >
@@ -208,7 +208,7 @@ export default function ClientFormDialog({
               Cancelar
             </button>
             <button className="btn btn-primary" type="submit">
-              {busy ? "Salvando..." : "Salvar cliente"}
+              {busy ? "Salvando..." : "Salvar contato"}
             </button>
           </div>
         </fieldset>

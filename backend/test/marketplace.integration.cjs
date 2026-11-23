@@ -1,11 +1,20 @@
 require('reflect-metadata');
 const assert = require('node:assert/strict');
+const { readdir } = require('node:fs/promises');
+const path = require('node:path');
 const { NestFactory } = require('@nestjs/core');
 const { ValidationPipe } = require('@nestjs/common');
 const { createTestDatabase } = require('./test-database.cjs');
 
 async function main() {
   const testDatabase = await createTestDatabase();
+  const oldCoverDirectory = process.env.SERVICE_COVERS_DIR;
+  const oldPublicApiUrl = process.env.PUBLIC_API_URL;
+  const databasePath = process.env.DATABASE_URL.slice('file:'.length);
+  process.env.SERVICE_COVERS_DIR = path.join(
+    path.dirname(databasePath),
+    'covers',
+  );
   let app;
   let checks = 0;
   try {
@@ -24,6 +33,7 @@ async function main() {
       .select(ServicesModule)
       .get(PrismaService, { strict: true });
     const base = (await app.getUrl()) + '/api';
+    process.env.PUBLIC_API_URL = base;
     async function request(method, route, body, expected, account) {
       const response = await fetch(base + route, {
         method,
@@ -652,6 +662,136 @@ async function main() {
       400,
       clientB,
     );
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aO1sAAAAASUVORK5CYII=',
+      'base64',
+    );
+    async function upload(
+      method,
+      route,
+      payload,
+      account,
+      expected,
+      bytes = png,
+    ) {
+      const form = new FormData();
+      form.append('service', JSON.stringify(payload));
+      form.append(
+        'cover',
+        new Blob([bytes], { type: 'image/png' }),
+        'capa.png',
+      );
+      const response = await fetch(base + route, {
+        method: method === 'POST' ? 'POST' : 'PATCH',
+        headers: { Authorization: 'Bearer ' + account.access_token },
+        body: form,
+        signal: AbortSignal.timeout(10000),
+      });
+      const result = await response.json();
+      assert.equal(response.status, expected, JSON.stringify(result));
+      checks++;
+      return result;
+    }
+    async function checkCover(url) {
+      const response = await fetch(url);
+      assert.equal(response.status, 200);
+      assert.equal(response.headers.get('content-type'), 'image/png');
+      assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+      assert.deepEqual(Buffer.from(await response.arrayBuffer()), png);
+    }
+
+    const legacyUrl = 'https://example.com/capa-antiga.jpg';
+    const legacyService = await request(
+      'POST',
+      '/services',
+      { ...validService, imageUrl: legacyUrl },
+      201,
+      freelancerA,
+    );
+    assert.equal(
+      (
+        await request(
+          'PATCH',
+          `/services/${legacyService.id}`,
+          { category: 'Design' },
+          200,
+          freelancerA,
+        )
+      ).imageUrl,
+      legacyUrl,
+    );
+    assert.equal(
+      (await request('GET', `/services/${legacyService.id}`, undefined, 200))
+        .imageUrl,
+      legacyUrl,
+    );
+
+    const withCover = await upload(
+      'POST',
+      '/services',
+      validService,
+      freelancerA,
+      201,
+    );
+    const route = `/services/${withCover.id}`;
+    assert.match(
+      withCover.imageUrl,
+      /\/api\/services\/covers\/[a-f0-9-]+\.png$/,
+    );
+    await checkCover(withCover.imageUrl);
+    assert.equal(
+      (await request('GET', '/services', undefined, 200)).find(
+        ({ id }) => id === withCover.id,
+      ).imageUrl,
+      withCover.imageUrl,
+    );
+    assert.equal(
+      (
+        await request(
+          'PATCH',
+          route,
+          { title: 'Título novo' },
+          200,
+          freelancerA,
+        )
+      ).imageUrl,
+      withCover.imageUrl,
+    );
+
+    await upload('PATCH', route, {}, freelancerB, 404);
+    await request('PATCH', route, { imageUrl: null }, 404, freelancerB);
+    await upload('PATCH', route, {}, clientB, 403);
+    await upload(
+      'PATCH',
+      route,
+      { title: 'Alteração inválida' },
+      freelancerA,
+      400,
+      Buffer.from('não é uma imagem'),
+    );
+    await upload(
+      'PATCH',
+      route,
+      {},
+      freelancerA,
+      413,
+      Buffer.alloc(5 * 1024 * 1024 + 2),
+    );
+    const unchanged = await request('GET', route, undefined, 200);
+    assert.equal(unchanged.imageUrl, withCover.imageUrl);
+    assert.equal(unchanged.title, 'Título novo');
+
+    const replaced = await upload('PATCH', route, {}, freelancerA, 200);
+    assert.notEqual(replaced.imageUrl, withCover.imageUrl);
+    assert.equal((await fetch(withCover.imageUrl)).status, 404);
+    await checkCover(replaced.imageUrl);
+    assert.equal(
+      (await request('PATCH', route, { imageUrl: null }, 200, freelancerA))
+        .imageUrl,
+      null,
+    );
+    assert.equal((await fetch(replaced.imageUrl)).status, 404);
+    assert.deepEqual(await readdir(process.env.SERVICE_COVERS_DIR), []);
     const preflight = await fetch(base + '/services', {
       method: 'OPTIONS',
       headers: {
@@ -670,6 +810,10 @@ async function main() {
     );
   } finally {
     if (app) await app.close();
+    if (oldCoverDirectory === undefined) delete process.env.SERVICE_COVERS_DIR;
+    else process.env.SERVICE_COVERS_DIR = oldCoverDirectory;
+    if (oldPublicApiUrl === undefined) delete process.env.PUBLIC_API_URL;
+    else process.env.PUBLIC_API_URL = oldPublicApiUrl;
     await testDatabase.cleanup();
   }
 }

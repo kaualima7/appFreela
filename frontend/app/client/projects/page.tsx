@@ -1,4 +1,6 @@
 "use client";
+
+import RefreshButton from "@/app/components/RefreshButton";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { API_URL, managementError } from "@/app/api";
@@ -57,13 +59,11 @@ export default function ClientProjects() {
     <section>
       <div className="d-flex flex-wrap justify-content-between gap-3 mb-4">
         <h1>Meus projetos</h1>
-        <button
-          className="btn btn-outline-primary"
+        <RefreshButton
+          label="Atualizar projetos"
           onClick={reload}
-          disabled={loading}
-        >
-          Atualizar projetos
-        </button>
+          loading={loading}
+        />
       </div>
       {loading ? (
         <p role="status">Carregando seus projetos...</p>

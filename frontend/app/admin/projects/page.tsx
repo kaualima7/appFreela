@@ -1,4 +1,6 @@
 "use client";
+
+import RefreshButton from "@/app/components/RefreshButton";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { API_URL, managementError } from "@/app/api";
@@ -11,6 +13,7 @@ import {
   money,
 } from "@/app/types/management";
 import ProjectFormDialog from "@/app/components/ProjectFormDialog";
+import ServiceDialog from "@/app/components/service/ServiceDialog";
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [clients, setClients] = useState<ClientContact[]>([]);
@@ -72,25 +75,25 @@ export default function Projects() {
   }
   return (
     <section>
-      <div className="d-flex flex-wrap justify-content-between gap-3 mb-4">
-        <h1>Projetos</h1>
-        <div className="d-flex gap-2">
-          <button
-            className="btn btn-outline-primary"
-            disabled={loading}
+      <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <h1 className="h2 fw-semibold mb-0">Projetos</h1>
+        <div className="workspace-actions d-flex flex-wrap gap-2">
+          <RefreshButton
+            label="Atualizar projetos"
             onClick={reload}
-          >
-            Atualizar
-          </button>
+            loading={loading}
+          />
           <button
+            type="button"
             className="btn btn-primary"
-            disabled={loading || !!error || clients.length === 0}
+            disabled={loading || !!error}
             onClick={() => {
               setSuccess("");
               setCreating(true);
             }}
             data-dialog-return-focus
           >
+            <i className="bi bi-plus-lg" aria-hidden="true" />
             Novo projeto
           </button>
         </div>
@@ -111,14 +114,8 @@ export default function Projects() {
         </div>
       ) : (
         <>
-          {clients.length === 0 && (
-            <p>
-              Cadastre um cliente antes de criar um projeto.{" "}
-              <Link href="/admin/clients">Ir para Clientes</Link>
-            </p>
-          )}
           {projects.length === 0 ? (
-            <p>Nenhum projeto cadastrado.</p>
+            <p>Você ainda não tem projetos com clientes.</p>
           ) : (
             <div className="row g-3">
               {projects.map((project) => (
@@ -150,7 +147,7 @@ export default function Projects() {
           )}
         </>
       )}
-      {creating && (
+      {creating && clients.length > 0 && (
         <ProjectFormDialog
           clients={clients}
           onClose={() => setCreating(false)}
@@ -160,6 +157,37 @@ export default function Projects() {
             reload();
           }}
         />
+      )}
+      {creating && clients.length === 0 && (
+        <ServiceDialog
+          id="project-needs-contact"
+          title="Novo projeto"
+          busy={false}
+          onClose={() => setCreating(false)}
+        >
+          <p>
+            Para registrar um trabalho combinado, o projeto precisa estar
+            associado a um contato da sua lista.
+          </p>
+          <p className="text-secondary">
+            Você ainda não tem contatos. Um contato pode ser de alguém que já
+            tem conta no Freelike ou de alguém com quem você combinou o trabalho
+            por fora.
+          </p>
+          <div className="d-flex justify-content-end gap-2">
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={() => setCreating(false)}
+              data-dialog-focus
+            >
+              Voltar
+            </button>
+            <Link href="/admin/clients" className="btn btn-primary">
+              Ver contatos
+            </Link>
+          </div>
+        </ServiceDialog>
       )}
     </section>
   );

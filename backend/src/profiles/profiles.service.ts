@@ -38,6 +38,15 @@ export class ProfilesService {
     });
   }
 
+  async findOwn(userId: number) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { userId },
+      select: { fullName: true, avatarUrl: true },
+    });
+    if (!profile) throw new NotFoundException('Perfil não encontrado.');
+    return profile;
+  }
+
   async findOne(id: number, userId: number) {
     const profile = await this.prisma.profile.findFirst({
       where: { id, userId },

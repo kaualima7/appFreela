@@ -1,9 +1,13 @@
 "use client";
+
+import RefreshButton from "@/app/components/RefreshButton";
 import { useEffect, useState } from "react";
 import { API_URL, managementError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
 import type { ClientContact } from "@/app/types/management";
 import ClientFormDialog from "@/app/components/ClientFormDialog";
+import ServiceDialog from "@/app/components/service/ServiceDialog";
+
 export default function Clients() {
   const [clients, setClients] = useState<ClientContact[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +17,9 @@ export default function Clients() {
     undefined,
   );
   const [success, setSuccess] = useState("");
+  const [contactToDelete, setContactToDelete] = useState<ClientContact | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
@@ -32,7 +39,7 @@ export default function Clients() {
           setError(
             error instanceof Error && !(error instanceof TypeError)
               ? error.message
-              : "Não foi possível carregar os clientes.",
+              : "Não foi possível carregar os contatos.",
           );
       } finally {
         if (active) setLoading(false);
@@ -49,19 +56,46 @@ export default function Clients() {
     setError("");
     setRevision((previous) => previous + 1);
   }
+  async function deleteContact() {
+    if (!contactToDelete || deleting) return;
+    setDeleting(true);
+    setDeleteError("");
+    try {
+      const response = await authenticatedFetch(
+        `${API_URL}/clients/${contactToDelete.id}`,
+        { method: "DELETE" },
+      );
+      if (!response.ok) {
+        setDeleteError(await managementError(response));
+        return;
+      }
+      setContactToDelete(null);
+      setSuccess("Contato excluído.");
+      reload();
+    } catch {
+      setDeleteError("Não foi possível excluir o contato. Tente novamente.");
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   return (
     <section>
-      <div className="d-flex flex-wrap justify-content-between gap-3 mb-4">
-        <h1>Clientes</h1>
-        <div className="d-flex gap-2">
-          <button
-            className="btn btn-outline-primary"
+      <div className="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+        <div>
+          <h1 className="h2 fw-semibold mb-2">Contatos de clientes</h1>
+          <p className="text-secondary mb-0">
+            Guarde os contatos de trabalho para vinculá-los aos seus projetos.
+          </p>
+        </div>
+        <div className="workspace-actions d-flex flex-wrap gap-2">
+          <RefreshButton
+            label="Atualizar contatos"
             onClick={reload}
-            disabled={loading}
-          >
-            Atualizar
-          </button>
+            loading={loading}
+          />
           <button
+            type="button"
             className="btn btn-primary"
             onClick={() => {
               setSuccess("");
@@ -69,7 +103,8 @@ export default function Clients() {
             }}
             data-dialog-return-focus
           >
-            Novo cliente
+            <i className="bi bi-plus-lg" aria-hidden="true" />
+            Adicionar contato
           </button>
         </div>
       </div>
@@ -79,7 +114,7 @@ export default function Clients() {
         </p>
       )}
       {loading ? (
-        <p role="status">Carregando clientes...</p>
+        <p role="status">Carregando contatos...</p>
       ) : error ? (
         <div role="alert">
           <p>{error}</p>
@@ -88,7 +123,10 @@ export default function Clients() {
           </button>
         </div>
       ) : clients.length === 0 ? (
-        <p>Nenhum cliente cadastrado.</p>
+        <p role="status" className="text-secondary">
+          Adicione um contato para organizar projetos de clientes que chegaram
+          pelo Freelike ou por fora.
+        </p>
       ) : (
         <div className="row g-3">
           {clients.map((client) => (
@@ -107,20 +145,71 @@ export default function Clients() {
                     ? `Conta vinculada #${client.clientUserId}`
                     : "Sem conta vinculada"}
                 </p>
-                <button
-                  className="btn btn-outline-primary mt-auto"
-                  aria-label={`Editar ${client.name}`}
-                  onClick={() => {
-                    setSuccess("");
-                    setEditing(client);
-                  }}
-                >
-                  Editar
-                </button>
+                <div className="d-flex flex-wrap gap-2 mt-auto">
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary"
+                    aria-label={`Editar ${client.name}`}
+                    onClick={() => {
+                      setSuccess("");
+                      setEditing(client);
+                    }}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline-danger"
+                    aria-label={`Excluir contato ${client.name}`}
+                    onClick={() => {
+                      setSuccess("");
+                      setDeleteError("");
+                      setContactToDelete(client);
+                    }}
+                  >
+                    Excluir contato
+                  </button>
+                </div>
               </article>
             </div>
           ))}
         </div>
+      )}
+      {contactToDelete && (
+        <ServiceDialog
+          id="delete-contact"
+          title="Excluir contato"
+          busy={deleting}
+          onClose={() => setContactToDelete(null)}
+        >
+          <p>
+            Excluir <strong>{contactToDelete.name}</strong> da sua agenda?
+          </p>
+          {deleteError && (
+            <p className="alert alert-danger" role="alert">
+              {deleteError}
+            </p>
+          )}
+          <div className="d-flex flex-wrap justify-content-end gap-2 dialog-actions">
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              disabled={deleting}
+              onClick={() => setContactToDelete(null)}
+              data-dialog-focus
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              className="btn btn-danger"
+              disabled={deleting}
+              onClick={deleteContact}
+            >
+              {deleting ? "Excluindo..." : "Excluir contato"}
+            </button>
+          </div>
+        </ServiceDialog>
       )}
       {editing !== undefined && (
         <ClientFormDialog
@@ -128,7 +217,7 @@ export default function Clients() {
           onClose={() => setEditing(undefined)}
           onSaved={() => {
             setEditing(undefined);
-            setSuccess("Cliente salvo.");
+            setSuccess("Contato salvo.");
             reload();
           }}
         />

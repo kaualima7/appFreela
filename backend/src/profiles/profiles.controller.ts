@@ -22,6 +22,11 @@ export class ProfilesController {
     return this.service.create(dto, request.user.sub);
   }
 
+  @Get('me')
+  ownProfile(@Req() request: AuthenticatedRequest) {
+    return this.service.findOwn(request.user.sub);
+  }
+
   @Get(':id')
   findOne(
     @Param('id', ParseIntPipe) id: number,

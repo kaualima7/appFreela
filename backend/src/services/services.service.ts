@@ -9,29 +9,57 @@ import { Prisma } from '../generated/prisma/client';
 import { CreateServiceDto } from '../dtos/create-service.dto';
 import { UpdateServiceDto } from '../dtos/update-service.dto';
 import type { ServiceModel } from '../generated/prisma/models/Service';
-const publicServiceSelect = {
+import {
+  publicCoverUrl,
+  removeServiceCover,
+  storeServiceCover,
+  type ServiceCoverFile,
+} from './service-cover';
+
+const publicFreelancerSelect = {
+  id: true,
+  name: true,
+  profile: { select: { fullName: true, avatarUrl: true } },
+} satisfies Prisma.UserSelect;
+
+const publicServiceFields = {
   id: true,
   title: true,
   description: true,
   category: true,
   startingPrice: true,
   imageUrl: true,
-  freelancer: {
-    select: {
-      id: true,
-      name: true,
-      profile: { select: { fullName: true, avatarUrl: true } },
-    },
-  },
 } satisfies Prisma.ServiceSelect;
 
-type PublicService = Prisma.ServiceGetPayload<{
-  select: typeof publicServiceSelect;
-}>;
+const publicServiceSelect = {
+  ...publicServiceFields,
+  freelancer: { select: publicFreelancerSelect },
+} satisfies Prisma.ServiceSelect;
 
 @Injectable()
 export class ServicesService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async publicFreelancer(freelancerId: number) {
+    const freelancer = await this.prisma.user.findFirst({
+      where: { id: freelancerId, accountType: 'FREELANCER' },
+      select: {
+        ...publicFreelancerSelect,
+        services: {
+          where: { published: true },
+          orderBy: { createdAt: 'desc' },
+          select: publicServiceFields,
+        },
+      },
+    });
+    if (!freelancer) throw new NotFoundException('Freelancer não encontrado.');
+    return {
+      ...freelancer,
+      services: freelancer.services.map((service) =>
+        this.formatResponse(service),
+      ),
+    };
+  }
 
   private validateId(serviceId: number) {
     if (serviceId <= 0 || serviceId > 2147483647) {
@@ -39,8 +67,14 @@ export class ServicesService {
     }
   }
 
-  private formatResponse(service: ServiceModel | PublicService) {
-    return { ...service, startingPrice: service.startingPrice.toFixed(2) };
+  private formatResponse<
+    T extends Pick<ServiceModel, 'startingPrice' | 'imageUrl'>,
+  >(service: T) {
+    return {
+      ...service,
+      startingPrice: service.startingPrice.toFixed(2),
+      imageUrl: publicCoverUrl(service.imageUrl),
+    };
   }
 
   async catalog() {
@@ -79,43 +113,90 @@ export class ServicesService {
     return this.formatResponse(service);
   }
 
-  async create(dto: CreateServiceDto, freelancerId: number) {
-    const service = await this.prisma.service.create({
-      data: {
-        freelancerId,
-        title: dto.title,
-        description: dto.description,
-        category: dto.category,
-        startingPrice: new Prisma.Decimal(dto.startingPrice),
-        imageUrl: dto.imageUrl,
-        published: dto.published,
-      },
-    });
-    return this.formatResponse(service);
+  async create(
+    dto: CreateServiceDto,
+    freelancerId: number,
+    cover?: ServiceCoverFile,
+  ) {
+    const uploadedCover = cover ? await storeServiceCover(cover) : null;
+    try {
+      const service = await this.prisma.service.create({
+        data: {
+          freelancerId,
+          title: dto.title,
+          description: dto.description,
+          category: dto.category,
+          startingPrice: new Prisma.Decimal(dto.startingPrice),
+          imageUrl: uploadedCover ?? dto.imageUrl,
+          published: dto.published,
+        },
+      });
+      return this.formatResponse(service);
+    } catch (error) {
+      await removeServiceCover(uploadedCover);
+      throw error;
+    }
   }
 
-  async update(serviceId: number, dto: UpdateServiceDto, freelancerId: number) {
-    await this.findOwn(serviceId, freelancerId);
-    const service = await this.prisma.service.update({
-      where: { id: serviceId },
-      data: {
-        title: dto.title,
-        description: dto.description,
-        category: dto.category,
-        startingPrice:
-          dto.startingPrice === undefined
-            ? undefined
-            : new Prisma.Decimal(dto.startingPrice),
-        imageUrl: dto.imageUrl,
-        published: dto.published,
-      },
-    });
-    return this.formatResponse(service);
+  async update(
+    serviceId: number,
+    dto: UpdateServiceDto,
+    freelancerId: number,
+    cover?: ServiceCoverFile,
+  ) {
+    this.validateId(serviceId);
+    if (cover) await this.findOwn(serviceId, freelancerId);
+    const uploadedCover = cover ? await storeServiceCover(cover) : null;
+    const imageUrl = uploadedCover ?? dto.imageUrl;
+    const saved = await this.prisma
+      .$transaction(async (prisma) => {
+        const previous = await prisma.service.findFirst({
+          where: { id: serviceId, freelancerId },
+          select: { imageUrl: true },
+        });
+        if (!previous) throw new NotFoundException('Serviço não encontrado.');
+
+        const service = await prisma.service.update({
+          where: { id: serviceId, freelancerId },
+          data: {
+            title: dto.title,
+            description: dto.description,
+            category: dto.category,
+            startingPrice:
+              dto.startingPrice === undefined
+                ? undefined
+                : new Prisma.Decimal(dto.startingPrice),
+            imageUrl,
+            published: dto.published,
+          },
+        });
+        return { service, previousCover: previous.imageUrl };
+      })
+      .catch(async (error: unknown) => {
+        await removeServiceCover(uploadedCover);
+        throw error;
+      });
+    if (saved.previousCover !== saved.service.imageUrl)
+      await removeServiceCover(saved.previousCover);
+    return this.formatResponse(saved.service);
   }
 
   async remove(serviceId: number, freelancerId: number) {
-    await this.findOwn(serviceId, freelancerId);
-    await this.prisma.service.delete({ where: { id: serviceId } });
+    this.validateId(serviceId);
+    const service = await this.prisma.service
+      .delete({
+        where: { id: serviceId, freelancerId },
+      })
+      .catch((error: unknown) => {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === 'P2025'
+        ) {
+          throw new NotFoundException('Serviço não encontrado.');
+        }
+        throw error;
+      });
+    await removeServiceCover(service.imageUrl);
     return { message: 'Serviço excluído com sucesso.' };
   }
 

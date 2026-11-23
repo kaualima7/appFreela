@@ -39,7 +39,7 @@ async function readInterests(signal?: AbortSignal): Promise<ClientInterest[]> {
     throw new Error(
       await interestError(
         response,
-        "Não foi possível carregar seus interesses. Tente novamente.",
+        "Não foi possível carregar seus likes. Tente novamente.",
       ),
     );
   const interests: ClientInterest[] | null = await response
@@ -47,7 +47,7 @@ async function readInterests(signal?: AbortSignal): Promise<ClientInterest[]> {
     .catch(() => null);
   if (!Array.isArray(interests))
     throw new Error(
-      "Não foi possível carregar seus interesses. Tente novamente.",
+      "Não foi possível carregar seus likes. Tente novamente.",
     );
   return interests;
 }
@@ -94,7 +94,7 @@ export default function InterestsProvider({
               !(error instanceof TypeError) &&
               error.name !== "AbortError"
                 ? error.message
-                : "Não foi possível carregar seus interesses. Tente novamente.",
+                : "Não foi possível carregar seus likes. Tente novamente.",
           }));
       } finally {
         clearTimeout(timeout);
@@ -136,7 +136,7 @@ export default function InterestsProvider({
           response.status === 404
             ? await interestError(
                 response,
-                "Serviço ou interesse indisponível.",
+                "Serviço ou like indisponível.",
               )
             : "Não foi possível sincronizar o like. Tente novamente.";
         let syncVersion: number;

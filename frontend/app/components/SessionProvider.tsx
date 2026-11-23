@@ -16,6 +16,7 @@ import {
 
 const SessionContext = createContext<{
   user: SessionUser | null;
+  navigationAccountType: SessionUser["accountType"] | null;
   checking: boolean;
   error: string;
   retry: () => void;
@@ -24,6 +25,7 @@ const SessionContext = createContext<{
 export default function SessionProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [revision, setRevision] = useState(0);
+  const [focusRevision, setFocusRevision] = useState(0);
   const [session, setSession] = useState<{
     path: string | null;
     revision: number;
@@ -63,23 +65,27 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [pathname, revision]);
+  }, [pathname, revision, focusRevision]);
 
   useEffect(() => {
     function refresh() {
       setRevision((previousRevision) => previousRevision + 1);
+    }
+    function checkOnFocus() {
+      // Voltar do seletor de arquivos não deve desmontar uma tela já autorizada.
+      setFocusRevision((previousRevision) => previousRevision + 1);
     }
     function restore(event: PageTransitionEvent) {
       if (event.persisted) refresh();
     }
     window.addEventListener(SESSION_CHANGED, refresh);
     window.addEventListener("storage", refresh);
-    window.addEventListener("focus", refresh);
+    window.addEventListener("focus", checkOnFocus);
     window.addEventListener("pageshow", restore);
     return () => {
       window.removeEventListener(SESSION_CHANGED, refresh);
       window.removeEventListener("storage", refresh);
-      window.removeEventListener("focus", refresh);
+      window.removeEventListener("focus", checkOnFocus);
       window.removeEventListener("pageshow", restore);
     };
   }, []);
@@ -89,6 +95,10 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
     <SessionContext.Provider
       value={{
         user: checking ? null : session.user,
+        navigationAccountType:
+          session.revision === revision
+            ? (session.user?.accountType ?? null)
+            : null,
         checking,
         error: checking ? "" : session.error,
         retry: () => setRevision((previousRevision) => previousRevision + 1),

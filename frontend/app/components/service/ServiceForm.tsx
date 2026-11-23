@@ -1,9 +1,18 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { API_URL, serviceError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
 import type { FreelancerService } from "@/app/types/service";
+
+import ServiceImage from "./ServiceImage";
+import ServiceCoverEditor, {
+  defaultCoverFrame,
+  prepareServiceCover,
+} from "./ServiceCoverEditor";
+
+const coverTypes = ["image/jpeg", "image/png", "image/webp"];
+const coverLimit = 5 * 1024 * 1024;
 
 export default function ServiceForm({
   service,
@@ -20,10 +29,42 @@ export default function ServiceForm({
   const [startingPrice, setStartingPrice] = useState(
     service?.startingPrice ?? "",
   );
-  const [imageUrl, setImageUrl] = useState(service?.imageUrl ?? "");
+  const [cover, setCover] = useState<string | null>(null);
+  const [coverFrame, setCoverFrame] = useState(defaultCoverFrame);
+  const [coverError, setCoverError] = useState("");
+  const [removeCover, setRemoveCover] = useState(false);
   const [published, setPublished] = useState(service?.published ?? false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  const coverPreview =
+    cover ?? (removeCover ? null : service?.imageUrl ?? null);
+
+  useEffect(() => {
+    if (cover) return () => URL.revokeObjectURL(cover);
+  }, [cover]);
+
+  function chooseCover(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.currentTarget.files?.[0];
+    event.currentTarget.value = "";
+    if (!file) return;
+    if (
+      !coverTypes.includes(file.type) &&
+      !/\.(jpe?g|png|webp)$/i.test(file.name)
+    ) {
+      setCoverError("Escolha uma imagem JPG, JPEG, PNG ou WebP.");
+      return;
+    }
+    if (file.size > coverLimit) {
+      setCoverError("Escolha uma imagem de até 5 MB.");
+      return;
+    }
+    setError("");
+    setCoverError("");
+    setCover(URL.createObjectURL(file));
+    setCoverFrame(defaultCoverFrame);
+    setRemoveCover(false);
+  }
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -48,43 +89,43 @@ export default function ServiceForm({
       );
       return;
     }
-    if (imageUrl.trim()) {
-      try {
-        const imageAddress = new URL(imageUrl.trim());
-        if (
-          !["http:", "https:"].includes(imageAddress.protocol) ||
-          imageUrl.trim().length > 500
-        )
-          throw new Error();
-      } catch {
-        setError(
-          "Informe uma URL de imagem válida, começando com http:// ou https://.",
-        );
-        return;
-      }
-    }
     setSaving(true);
     try {
+      const serviceFields = {
+        title: title.trim(),
+        description: description.trim(),
+        category: category.trim(),
+        startingPrice: startingPrice.trim(),
+        published,
+        ...(removeCover ? { imageUrl: null } : {}),
+      };
+      const form = cover ? new FormData() : null;
+      if (form && cover) {
+        form.append("service", JSON.stringify(serviceFields));
+        let image: Blob;
+        try {
+          image = await prepareServiceCover(cover, coverFrame);
+        } catch {
+          setCoverError("Não foi possível preparar a capa. Escolha outra imagem e tente novamente.");
+          return;
+        }
+        form.append("cover", image, image.type === "image/webp" ? "capa.webp" : "capa.png");
+      }
       const response = await authenticatedFetch(
         `${API_URL}/services${service ? `/${service.id}` : ""}`,
         {
           method: service ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: title.trim(),
-            description: description.trim(),
-            category: category.trim(),
-            startingPrice: startingPrice.trim(),
-            imageUrl: imageUrl.trim() || null,
-            published,
-          }),
+          headers: form ? undefined : { "Content-Type": "application/json" },
+          body: form ?? JSON.stringify(serviceFields),
         },
       );
       if (!response.ok) {
         setError(
           await serviceError(
             response,
-            "Não foi possível salvar o serviço. Tente novamente.",
+            cover
+              ? "Não foi possível enviar a imagem e salvar o anúncio. Tente novamente."
+              : "Não foi possível salvar o serviço. Tente novamente.",
           ),
         );
         return;
@@ -177,22 +218,58 @@ export default function ServiceForm({
           </div>
           <div className="mb-3">
             <label htmlFor="service-image" className="form-label">
-              URL da imagem{" "}
+              Escolher imagem{" "}
               <span className="text-secondary fw-normal">(opcional)</span>
             </label>
             <input
               id="service-image"
-              type="url"
+              type="file"
               className="form-control"
-              value={imageUrl}
-              onChange={(event) => setImageUrl(event.target.value)}
-              maxLength={500}
-              placeholder="https://exemplo.com/imagem.jpg"
+              accept={[...coverTypes, ".jpg", ".jpeg", ".png", ".webp"].join(",")}
+              onChange={chooseCover}
               aria-describedby="service-image-help"
             />
-            <p id="service-image-help" className="form-text mb-0">
-              Para remover a imagem, deixe este campo vazio.
+            <p id="service-image-help" className="form-text">
+              JPG, JPEG, PNG ou WebP de até 5 MB.
             </p>
+            {coverError && (
+              <p className="text-danger small" role="alert">{coverError}</p>
+            )}
+            {coverPreview && (
+              <div className="service-cover-preview mt-3">
+                {cover ? (
+                  <ServiceCoverEditor
+                    key={cover}
+                    url={cover}
+                    frame={coverFrame}
+                    disabled={saving}
+                    onChange={setCoverFrame}
+                  />
+                ) : (
+                  <ServiceImage
+                    title="Prévia da capa do anúncio"
+                    imageUrl={coverPreview}
+                  />
+                )}
+                <button
+                  type="button"
+                  className="btn btn-outline-primary btn-sm mt-2"
+                  onClick={() => {
+                    setCover(null);
+                    setRemoveCover(true);
+                    setCoverError("");
+                    setError("");
+                  }}
+                >
+                  Remover capa
+                </button>
+              </div>
+            )}
+            {!coverPreview && removeCover && service?.imageUrl && (
+              <p className="form-text mb-0" role="status">
+                A capa atual será removida ao salvar.
+              </p>
+            )}
           </div>
           <div className="form-check mb-4">
             <input
@@ -207,7 +284,7 @@ export default function ServiceForm({
             </label>
           </div>
         </fieldset>
-        <div className="d-flex justify-content-end flex-wrap gap-2 dialog-actions">
+        <div className="workspace-actions d-flex justify-content-end flex-wrap gap-2 dialog-actions">
           <button
             type="button"
             className="btn btn-outline-primary"

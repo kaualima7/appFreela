@@ -23,8 +23,12 @@ export default function ServiceCard({
     service.freelancer.profile?.fullName || service.freelancer.name;
 
   return (
-    <article className="card service-card h-100">
-      <ServiceImage title={service.title} imageUrl={service.imageUrl} />
+    <article
+      className={`card service-card${service.imageUrl ? " h-100" : " service-card-compact"}`}
+    >
+      {service.imageUrl && (
+        <ServiceImage title={service.title} imageUrl={service.imageUrl} />
+      )}
       <div className="card-body d-flex flex-column p-4">
         <span className="service-category align-self-start mb-3">
           {service.category}

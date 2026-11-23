@@ -64,7 +64,12 @@ function EditServiceContent({ id }: { id: string }) {
   }, [id, revision]);
   return (
     <section className="service-form-page mx-auto">
-      <Link href="/admin/services">Voltar a Meus serviços</Link>
+      <div className="workspace-actions">
+        <Link href="/admin/services" className="btn btn-outline-primary">
+          <i className="bi bi-arrow-left" aria-hidden="true" />
+          Voltar aos anúncios
+        </Link>
+      </div>
       <h1 className="h2 my-4">Editar serviço</h1>
       {loading ? (
         <p role="status">Carregando serviço...</p>

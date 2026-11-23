@@ -85,7 +85,7 @@ async function main() {
   auth.saveSession({ access_token: "token-de-teste", user });
   assert.equal(auth.getToken(), "token-de-teste");
   assert.equal(storage.size, 1);
-  assert.equal(auth.accountHome("CLIENT"), "/client");
+  assert.equal(auth.accountHome("CLIENT"), "/explorar");
   assert.equal(auth.accountHome("FREELANCER"), "/admin");
   auth.logout();
   assert.equal(auth.getToken(), null);

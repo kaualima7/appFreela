@@ -1,10 +1,9 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { API_URL } from "@/app/api";
-import Header from "@/app/components/Header";
+import ProfileAvatar from "@/app/components/ProfileAvatar";
 import ServiceImage from "@/app/components/service/ServiceImage";
 import LikeButton from "@/app/components/service/LikeButton";
 import { useInterests } from "@/app/components/InterestsProvider";
@@ -20,7 +19,6 @@ function ServiceDetailsContent({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [revision, setRevision] = useState(0);
-  const [failedAvatar, setFailedAvatar] = useState<string | null>(null);
   const { user } = useSession();
   const { error: interestsError, reload } = useInterests();
   useEffect(() => {
@@ -69,9 +67,13 @@ function ServiceDetailsContent({ id }: { id: string }) {
   const avatar = service?.freelancer.profile?.avatarUrl;
   return (
     <>
-      <Header contentId="service-details" />
       <main id="service-details" className="container py-5" tabIndex={-1}>
-        <Link href="/">Voltar à vitrine</Link>
+        <div className="workspace-actions">
+          <Link href="/explorar" className="btn workspace-refresh">
+            <i className="bi bi-arrow-left" aria-hidden="true" />
+            Voltar à vitrine
+          </Link>
+        </div>
         {loading ? (
           <p role="status" className="mt-4">
             Carregando serviço...
@@ -111,29 +113,21 @@ function ServiceDetailsContent({ id }: { id: string }) {
               </div>
               <aside
                 className="col-12 col-lg-4"
-                aria-label="Profissional e interesse"
+                aria-label="Profissional e like no anúncio"
               >
                 <div className="card card-body p-4">
                   <p className="small text-secondary mb-1">A partir de</p>
                   <p className="h3 mb-4">{money(service.startingPrice)}</p>
                   <div className="d-flex gap-3 align-items-center">
-                    <span className="professional-initial overflow-hidden">
-                      {avatar && avatar !== failedAvatar ? (
-                        <Image
-                          src={avatar}
-                          alt={`Foto de ${professionalName}`}
-                          width={48}
-                          height={48}
-                          unoptimized
-                          onError={() => setFailedAvatar(avatar)}
-                        />
-                      ) : (
-                        professionalName.trim().charAt(0).toUpperCase()
-                      )}
-                    </span>
-                    <span className="fw-semibold text-break">
-                      {professionalName}
-                    </span>
+                    <ProfileAvatar name={professionalName} avatarUrl={avatar} />
+                    <div>
+                      <p className="fw-semibold text-break mb-1">
+                        {professionalName}
+                      </p>
+                      <Link href={`/freelancers/${service.freelancer.id}`}>
+                        Ver perfil
+                      </Link>
+                    </div>
                   </div>
                   <LikeButton service={service} />
                   {user?.accountType === "CLIENT" && interestsError && (
@@ -148,7 +142,7 @@ function ServiceDetailsContent({ id }: { id: string }) {
                     </div>
                   )}
                   <p className="small text-secondary mt-3 mb-0">
-                    O like demonstra interesse neste serviço.
+                    Dê um like para mostrar ao freelancer que você tem interesse neste serviço.
                   </p>
                 </div>
               </aside>

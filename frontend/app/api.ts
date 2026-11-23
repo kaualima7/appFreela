@@ -26,8 +26,8 @@ export async function serviceError(response: Response, fallback: string) {
     return "Você não tem permissão para administrar este serviço.";
   if (response.status === 404)
     return "Serviço não encontrado ou indisponível para sua conta. Atualize a lista.";
-  if (response.status === 400)
-    return "Confira os campos informados. Use uma URL de imagem HTTP ou HTTPS válida.";
+  if (response.status === 413) return "Escolha uma imagem de até 5 MB.";
+  if (response.status >= 500) return fallback;
   return responseError(response, fallback);
 }
 
@@ -35,7 +35,7 @@ export async function interestError(response: Response, fallback: string) {
   if (response.status === 403)
     return "Sua conta não tem permissão para esta operação.";
   if (response.status === 404)
-    return "Serviço ou interesse indisponível. Atualize a lista.";
+    return "Serviço ou like indisponível. Atualize a lista.";
   if (response.status >= 500) return fallback;
   return responseError(response, fallback);
 }

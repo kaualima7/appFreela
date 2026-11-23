@@ -3,11 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Req,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AccountTypes } from '../auth/account-types.decorator';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';
@@ -15,6 +18,11 @@ import { Public } from '../auth/public.decorator';
 import { CreateServiceDto } from '../dtos/create-service.dto';
 import { UpdateServiceDto } from '../dtos/update-service.dto';
 import { ServicesService } from './services.service';
+import { readServiceCover, type ServiceCoverFile } from './service-cover';
+import {
+  ServiceCoverUpload,
+  ServiceFormInterceptor,
+} from './service-form.interceptor';
 
 @Controller('services')
 export class ServicesController {
@@ -42,6 +50,14 @@ export class ServicesController {
   }
 
   @Public()
+  @Get('covers/:fileName')
+  @Header('X-Content-Type-Options', 'nosniff')
+  @Header('Cache-Control', 'no-cache')
+  cover(@Param('fileName') fileName: string) {
+    return readServiceCover(fileName);
+  }
+
+  @Public()
   @Get(':id')
   details(@Param('id', ParseIntPipe) serviceId: number) {
     return this.service.details(serviceId);
@@ -49,18 +65,25 @@ export class ServicesController {
 
   @AccountTypes('FREELANCER')
   @Post()
-  create(@Body() dto: CreateServiceDto, @Req() request: AuthenticatedRequest) {
-    return this.service.create(dto, request.user.sub);
+  @UseInterceptors(ServiceCoverUpload, ServiceFormInterceptor)
+  create(
+    @Body() dto: CreateServiceDto,
+    @Req() request: AuthenticatedRequest,
+    @UploadedFile() cover?: ServiceCoverFile,
+  ) {
+    return this.service.create(dto, request.user.sub, cover);
   }
 
   @AccountTypes('FREELANCER')
   @Patch(':id')
+  @UseInterceptors(ServiceCoverUpload, ServiceFormInterceptor)
   update(
     @Param('id', ParseIntPipe) serviceId: number,
     @Body() dto: UpdateServiceDto,
     @Req() request: AuthenticatedRequest,
+    @UploadedFile() cover?: ServiceCoverFile,
   ) {
-    return this.service.update(serviceId, dto, request.user.sub);
+    return this.service.update(serviceId, dto, request.user.sub, cover);
   }
 
   @AccountTypes('FREELANCER')

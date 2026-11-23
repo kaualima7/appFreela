@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import RefreshButton from "@/app/components/RefreshButton";
 import { useEffect, useState, type FormEvent } from "react";
 import { API_URL, responseError } from "@/app/api";
 import { getToken, authenticatedFetch } from "@/app/login/auth_service";
@@ -192,7 +193,17 @@ export default function Profiles() {
 
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="h5 mb-0">Perfis cadastrados ({profiles.length})</h2>
-                <button className="btn btn-sm btn-outline-secondary" type="button" disabled={loading || saving} onClick={() => { setError(""); void load().catch((err) => setError(err instanceof Error ? err.message : "Não foi possível carregar os dados.")); }}>Atualizar lista</button>
+                <RefreshButton
+                    label="Atualizar lista de perfis"
+                    loading={loading}
+                    disabled={saving}
+                    onClick={() => {
+                        setError("");
+                        void load().catch((err) =>
+                            setError(err instanceof Error ? err.message : "Não foi possível carregar os dados."),
+                        );
+                    }}
+                />
             </div>
             {loading ? <p role="status">Carregando...</p> : profiles.length === 0 ? <p className="text-secondary">Nenhum perfil cadastrado.</p> : (
                 <div className="table-responsive">

@@ -140,7 +140,11 @@ function ProjectDetailsContent({ id }: { id: string }) {
         />
       )}
       {!loading && !error && project && (
-        <ProjectPayments key={project.id} projectId={project.id} />
+        <ProjectPayments
+          key={project.id}
+          projectId={project.id}
+          projectValue={project.value}
+        />
       )}
     </section>
   );

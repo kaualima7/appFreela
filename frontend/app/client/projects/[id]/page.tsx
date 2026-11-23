@@ -94,7 +94,12 @@ function ProjectDetails({ id }: { id: string }) {
                 Valor: {money(project.value)}
               </p>
             </article>
-            <ProjectPayments key={project.id} projectId={project.id} readOnly />
+            <ProjectPayments
+              key={project.id}
+              projectId={project.id}
+              projectValue={project.value}
+              readOnly
+            />
           </>
         )
       )}

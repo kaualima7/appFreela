@@ -13,7 +13,7 @@ export type SessionUser = {
 export type AuthSession = { access_token: string; user: SessionUser };
 
 export function accountHome(accountType: AccountType) {
-  return accountType === "CLIENT" ? "/client" : "/admin";
+  return accountType === "CLIENT" ? "/explorar" : "/admin";
 }
 
 export function getToken(): string | null {

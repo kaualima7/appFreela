@@ -1,5 +1,7 @@
 "use client";
 
+import RefreshButton from "@/app/components/RefreshButton";
+
 import Link from "next/link";
 import { useState } from "react";
 import type { PublicService } from "@/app/types/service";
@@ -68,19 +70,17 @@ export default function LikeButton({
       {error && !dialog && user?.accountType === "CLIENT" && (
         <div className="small mt-2" role="alert">
           <p className="text-danger mb-1">{error}</p>
-          <button
-            type="button"
-            className="btn btn-link btn-sm p-0"
+          <RefreshButton
+            label="Atualizar likes"
             onClick={reload}
-          >
-            Atualizar likes
-          </button>
+            loading={loading}
+          />
         </div>
       )}
       {dialog && (
         <ServiceDialog
           id={`like-${service.id}`}
-          title={requiresLogin ? "Entre para dar like" : "Confirmar interesse"}
+          title={requiresLogin ? "Entre para dar like" : "Confirmar like"}
           busy={pending}
           onClose={() => setDialog(null)}
         >
@@ -107,7 +107,7 @@ export default function LikeButton({
           ) : (
             <>
               <p>
-                Demonstrar interesse em <strong>{service.title}</strong>?
+                Quer dar like em <strong>{service.title}</strong>?
               </p>
               <p className="text-secondary">
                 Seu nome e e-mail ficarão disponíveis para o freelancer.

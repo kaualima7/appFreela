@@ -28,6 +28,10 @@ export type FreelancerService = {
   updatedAt: string;
 };
 
+export type PublicFreelancer = PublicService["freelancer"] & {
+  services: Omit<PublicService, "freelancer">[];
+};
+
 export type ClientInterest = {
   id: number;
   serviceId: number;

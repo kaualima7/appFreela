@@ -46,7 +46,7 @@ export default function SessionGate({
             >
               Sair
             </button>
-            <Link href="/" className="btn btn-link">
+            <Link href="/explorar" className="btn btn-link">
               Voltar à vitrine
             </Link>
           </div>

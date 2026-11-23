@@ -119,7 +119,7 @@ export default function LoginPage() {
       <p className="auth-form-link mt-4 mb-3">
         Ainda não tem uma conta? <Link href="/register">Criar conta</Link>
       </p>
-      <Link href="/" className="auth-back-link">
+      <Link href="/explorar" className="auth-back-link">
         <i className="bi bi-arrow-left me-2" aria-hidden="true" />
         Voltar à vitrine
       </Link>

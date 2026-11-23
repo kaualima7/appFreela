@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -79,8 +80,18 @@ export class ClientsService {
   }
 
   async remove(id: number, userId: number) {
-    await this.findOne(id, userId);
-    await this.prisma.client.delete({ where: { id } });
-    return { message: 'Cliente excluído com sucesso.' };
+    // A condição é verificada na própria exclusão para evitar a cascata.
+    const result = await this.prisma.client.deleteMany({
+      where: { id, userId, projects: { none: {} } },
+    });
+
+    if (result.count === 0) {
+      await this.findOne(id, userId);
+      throw new ConflictException(
+        'Este contato tem projetos vinculados e não pode ser excluído.',
+      );
+    }
+
+    return { message: 'Contato excluído com sucesso.' };
   }
 }

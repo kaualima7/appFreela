@@ -1,4 +1,6 @@
 "use client";
+
+import RefreshButton from "@/app/components/RefreshButton";
 import { useEffect, useState } from "react";
 import { API_URL, managementError } from "../api";
 import { authenticatedFetch } from "../login/auth_service";
@@ -6,15 +8,17 @@ import { money, projectDate } from "../types/management";
 import {
   type Payment,
   paymentStatuses,
-  paymentTotals,
+  projectPaymentSummary,
   formatCents,
 } from "../types/payment";
 import PaymentFormDialog from "./PaymentFormDialog";
 export default function ProjectPayments({
   projectId,
+  projectValue,
   readOnly = false,
 }: {
   projectId: number;
+  projectValue: string;
   readOnly?: boolean;
 }) {
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -66,7 +70,7 @@ export default function ProjectPayments({
     setError("");
     setRevision((previous) => previous + 1);
   }
-  const totals = paymentTotals(payments);
+  const summary = projectPaymentSummary(projectValue, payments);
   return (
     <section className="mt-4" aria-labelledby="payments-title">
       <div className="d-flex flex-wrap justify-content-between gap-3 mb-3">
@@ -75,18 +79,17 @@ export default function ProjectPayments({
             Pagamentos
           </h2>
           <p className="small text-secondary">
-            Registros manuais de recebimentos.
+            {readOnly
+              ? "Os pagamentos são combinados diretamente com o freelancer."
+              : "Registros manuais de recebimentos."}
           </p>
         </div>
         <div className="d-flex flex-wrap gap-2 align-items-start">
-          <button
-            type="button"
-            className="btn btn-outline-primary"
-            disabled={loading}
+          <RefreshButton
+            label="Atualizar pagamentos"
             onClick={reload}
-          >
-            Atualizar pagamentos
-          </button>
+            loading={loading}
+          />
           {!readOnly && (
             <button
               type="button"
@@ -118,20 +121,28 @@ export default function ProjectPayments({
         </div>
       ) : (
         <>
-          <dl className="row g-3">
-            <div className="col-12 col-md-4">
-              <dt>Total registrado (sem cancelados)</dt>
-              <dd>{formatCents(totals.registered)}</dd>
-            </div>
-            <div className="col-12 col-md-4">
-              <dt>Total recebido</dt>
-              <dd>{formatCents(totals.received)}</dd>
-            </div>
-            <div className="col-12 col-md-4">
-              <dt>Total pendente</dt>
-              <dd>{formatCents(totals.pending)}</dd>
-            </div>
-          </dl>
+          <section
+            className="card card-body mb-4"
+            aria-labelledby="payments-summary-title"
+          >
+            <h3 id="payments-summary-title" className="h5 mb-3">
+              Resumo de pagamentos
+            </h3>
+            <dl className="row g-3 mb-0">
+              <div className="col-12 col-md-4">
+                <dt>Valor combinado</dt>
+                <dd className="mb-0">{formatCents(summary.agreed)}</dd>
+              </div>
+              <div className="col-12 col-md-4">
+                <dt>Já pago</dt>
+                <dd className="mb-0">{formatCents(summary.paid)}</dd>
+              </div>
+              <div className="col-12 col-md-4">
+                <dt>Falta pagar</dt>
+                <dd className="mb-0">{formatCents(summary.remaining)}</dd>
+              </div>
+            </dl>
+          </section>
           {payments.length === 0 ? (
             <p>Nenhum pagamento registrado para este projeto.</p>
           ) : (

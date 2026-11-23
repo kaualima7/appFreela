@@ -300,6 +300,61 @@ async function main() {
       201,
       a.access_token,
     );
+    const blocked = await request(
+      'DELETE',
+      `/clients/${clientA.id}`,
+      undefined,
+      409,
+      a.access_token,
+    );
+    assert.equal(
+      blocked.message,
+      'Este contato tem projetos vinculados e não pode ser excluído.',
+    );
+    await request(
+      'GET',
+      `/clients/${clientA.id}`,
+      undefined,
+      200,
+      a.access_token,
+    );
+    await request(
+      'GET',
+      `/projects/${project.id}`,
+      undefined,
+      200,
+      a.access_token,
+    );
+    await request(
+      'GET',
+      `/payments/${payment.id}`,
+      undefined,
+      200,
+      a.access_token,
+    );
+
+    const manualContact = await request(
+      'POST',
+      '/clients',
+      { name: 'Contato sem projetos' },
+      201,
+      a.access_token,
+    );
+    await request(
+      'DELETE',
+      `/clients/${manualContact.id}`,
+      undefined,
+      200,
+      a.access_token,
+    );
+    await request(
+      'GET',
+      `/clients/${manualContact.id}`,
+      undefined,
+      404,
+      a.access_token,
+    );
+
     await request(
       'GET',
       `/payments?projectId=${project.id}`,

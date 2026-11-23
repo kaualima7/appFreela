@@ -46,14 +46,14 @@ export default function InterestedClientsDialog({
           throw new Error(
             await interestError(
               response,
-              "Não foi possível carregar os interessados. Tente novamente.",
+              "Não foi possível carregar os likes. Tente novamente.",
             ),
           );
         const serviceInterests: InterestedClient[] | null = await response
           .json()
           .catch(() => null);
         if (!Array.isArray(serviceInterests))
-          throw new Error("Não foi possível carregar os interessados.");
+          throw new Error("Não foi possível carregar os likes.");
         if (active) setInterestedClients(serviceInterests);
       } catch (error) {
         if (active)
@@ -84,14 +84,14 @@ export default function InterestedClientsDialog({
         onClose={() => setClientAccount(null)}
         onSaved={(contact) => {
           setClientAccount(null);
-          setClientMessage(`Contato disponível em Clientes: ${contact.name}.`);
+          setClientMessage(`Contato salvo: ${contact.name}.`);
         }}
       />
     );
   return (
     <ServiceDialog
       id="interested-clients"
-      title="Interessados no serviço"
+      title="Quem deu like no serviço"
       busy={false}
       onClose={onClose}
     >
@@ -107,7 +107,7 @@ export default function InterestedClientsDialog({
             className="spinner-border text-primary mb-3"
             aria-hidden="true"
           />
-          <p className="text-secondary mb-0">Carregando interessados...</p>
+          <p className="text-secondary mb-0">Carregando likes...</p>
         </div>
       ) : error ? (
         <div role="alert">
@@ -126,7 +126,7 @@ export default function InterestedClientsDialog({
         </div>
       ) : interestedClients.length === 0 ? (
         <p className="text-secondary" role="status">
-          Ainda não há interessados neste serviço.
+          Este serviço ainda não recebeu likes.
         </p>
       ) : (
         <ul className="interested-clients list-unstyled mb-0">
@@ -152,7 +152,7 @@ export default function InterestedClientsDialog({
                   setClientAccount(interest.clientUser);
                 }}
               >
-                Cadastrar como cliente
+                Adicionar como contato
               </button>
             </li>
           ))}
