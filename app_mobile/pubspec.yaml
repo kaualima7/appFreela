@@ -1,0 +1,17 @@
+name: freelike_mobile
+description: Vitrine e likes do Freelike.
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.8.0 <4.0.0'
+
+dependencies:
+  http: ^1.6.0
+  flutter:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/freelike-symbol.png

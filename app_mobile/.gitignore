@@ -1,0 +1,11 @@
+.dart_tool/
+.flutter-plugins-dependencies
+.packages
+build/
+android/.gradle/
+android/.kotlin/
+android/local.properties
+android/gradlew
+android/gradlew.bat
+android/gradle/wrapper/gradle-wrapper.jar
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java

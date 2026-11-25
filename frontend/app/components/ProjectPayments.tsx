@@ -11,7 +11,7 @@ import {
   projectPaymentSummary,
   formatCents,
 } from "../types/payment";
-import PaymentFormDialog from "./PaymentFormDialog";
+import PaymentForm, { type PaymentFormAction } from "./PaymentForm";
 export default function ProjectPayments({
   projectId,
   projectValue,
@@ -25,7 +25,7 @@ export default function ProjectPayments({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [revision, setRevision] = useState(0);
-  const [editing, setEditing] = useState<Payment | null | undefined>(undefined);
+  const [formAction, setFormAction] = useState<PaymentFormAction | null>(null);
   const [success, setSuccess] = useState("");
   useEffect(() => {
     let active = true;
@@ -70,7 +70,24 @@ export default function ProjectPayments({
     setError("");
     setRevision((previous) => previous + 1);
   }
+  function openForm(action: PaymentFormAction) {
+    setSuccess("");
+    setFormAction(action);
+  }
+
   const summary = projectPaymentSummary(projectValue, payments);
+  const form = !readOnly && formAction && (
+    <PaymentForm
+      projectId={projectId}
+      action={formAction}
+      onClose={() => setFormAction(null)}
+      onSaved={() => {
+        setFormAction(null);
+        setSuccess("Pagamento salvo.");
+        reload();
+      }}
+    />
+  );
   return (
     <section className="mt-4" aria-labelledby="payments-title">
       <div className="d-flex flex-wrap justify-content-between gap-3 mb-3">
@@ -84,24 +101,33 @@ export default function ProjectPayments({
               : "Registros manuais de recebimentos."}
           </p>
         </div>
-        <div className="d-flex flex-wrap gap-2 align-items-start">
+        <div className="workspace-actions d-flex flex-wrap gap-2 align-items-start">
           <RefreshButton
             label="Atualizar pagamentos"
             onClick={reload}
             loading={loading}
+            disabled={formAction !== null}
           />
           {!readOnly && (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => {
-                setSuccess("");
-                setEditing(null);
-              }}
-              data-dialog-return-focus
-            >
-              Adicionar pagamento
-            </button>
+            <>
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={formAction !== null}
+                onClick={() => openForm({ type: "receipt" })}
+                data-dialog-return-focus
+              >
+                Registrar recebimento
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline-primary"
+                disabled={formAction !== null}
+                onClick={() => openForm({ type: "installment" })}
+              >
+                Adicionar parcela
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -110,6 +136,8 @@ export default function ProjectPayments({
           {success}
         </p>
       )}
+      {(formAction?.type === "receipt" || formAction?.type === "installment") &&
+        form}
       {loading ? (
         <p role="status">Carregando pagamentos...</p>
       ) : error ? (
@@ -165,17 +193,33 @@ export default function ProjectPayments({
                       </p>
                     )}
                     {!readOnly && (
-                      <button
-                        className="btn btn-outline-primary mt-auto"
-                        aria-label={`Editar pagamento de ${money(payment.amount)} com vencimento em ${projectDate(payment.dueDate)}`}
-                        onClick={() => {
-                          setSuccess("");
-                          setEditing(payment);
-                        }}
-                      >
-                        Editar
-                      </button>
+                      <div className="workspace-actions d-flex flex-wrap gap-2 mt-auto">
+                        {payment.status === "PENDING" && (
+                          <button
+                            type="button"
+                            className="btn btn-primary"
+                            disabled={formAction !== null}
+                            onClick={() =>
+                              openForm({ type: "markReceived", payment })
+                            }
+                          >
+                            Marcar como recebida
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className="btn btn-outline-primary"
+                          aria-label={`Editar pagamento de ${money(payment.amount)} com vencimento em ${projectDate(payment.dueDate)}`}
+                          disabled={formAction !== null}
+                          onClick={() => openForm({ type: "edit", payment })}
+                        >
+                          Editar
+                        </button>
+                      </div>
                     )}
+                    {formAction?.type === "markReceived" &&
+                      formAction.payment.id === payment.id &&
+                      form}
                   </article>
                 </div>
               ))}
@@ -183,18 +227,7 @@ export default function ProjectPayments({
           )}
         </>
       )}
-      {!readOnly && editing !== undefined && (
-        <PaymentFormDialog
-          projectId={projectId}
-          payment={editing ?? undefined}
-          onClose={() => setEditing(undefined)}
-          onSaved={() => {
-            setEditing(undefined);
-            setSuccess("Pagamento salvo.");
-            reload();
-          }}
-        />
-      )}
+      {formAction?.type === "edit" && form}
     </section>
   );
 }
