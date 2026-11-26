@@ -1,4 +1,6 @@
 "use client";
+// Formulário reutilizado para criar e editar projetos, com contato, valor e datas.
+
 import { useRef, useState, type FormEvent } from "react";
 import { API_URL, managementError } from "../api";
 import { authenticatedFetch } from "../login/auth_service";
@@ -33,6 +35,7 @@ export default function ProjectFormDialog({
   const [busy, setBusy] = useState(false);
   const saving = useRef(false);
   const [error, setError] = useState("");
+  //proj 1: envia contato, valor combinado e datas por POST /api/projects; PATCH edita -> projects.controller.ts
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving.current) return;
@@ -80,6 +83,7 @@ export default function ProjectFormDialog({
         },
       );
       if (!response.ok) throw new Error(await managementError(response));
+      // Devolve o projeto salvo para a tela atualizar os dados sem precisar repetir o preenchimento.
       onSaved(await response.json());
     } catch (error) {
       setError(

@@ -1,3 +1,5 @@
+// Carrega a capa pela URL e mostra um ícone enquanto carrega ou se houver erro.
+
 import 'package:flutter/material.dart';
 
 class ServiceCover extends StatelessWidget {

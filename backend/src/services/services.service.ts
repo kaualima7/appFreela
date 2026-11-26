@@ -1,3 +1,6 @@
+// Cuida dos anúncios e dos likes no banco, com as regras de acesso de cada conta.
+// Também chama service-cover.ts para salvar ou remover arquivos de capa.
+
 import {
   BadRequestException,
   ConflictException,
@@ -16,6 +19,7 @@ import {
   type ServiceCoverFile,
 } from './service-cover';
 
+// Escolhe os campos públicos do profissional que podem aparecer na vitrine.
 const publicFreelancerSelect = {
   id: true,
   name: true,
@@ -40,6 +44,7 @@ const publicServiceSelect = {
 export class ServicesService {
   constructor(private readonly prisma: PrismaService) {}
 
+  // Consulta o perfil público e inclui somente os anúncios publicados desse freelancer.
   async publicFreelancer(freelancerId: number) {
     const freelancer = await this.prisma.user.findFirst({
       where: { id: freelancerId, accountType: 'FREELANCER' },
@@ -68,6 +73,7 @@ export class ServicesService {
     }
   }
 
+  // Padroniza o preço e transforma a referência da capa em URL para a Web e o app.
   private formatResponse<
     T extends Pick<ServiceModel, 'startingPrice' | 'imageUrl'>,
   >(service: T) {
@@ -78,6 +84,7 @@ export class ServicesService {
     };
   }
 
+  // Vitrine: consulta somente anúncios publicados, do mais recente para o mais antigo.
   async catalog() {
     const services = await this.prisma.service.findMany({
       where: { published: true },
@@ -87,6 +94,7 @@ export class ServicesService {
     return services.map((service) => this.formatResponse(service));
   }
 
+  // Abre somente um anúncio publicado; se estiver oculto ou não existir, responde 404.
   async details(serviceId: number) {
     this.validateId(serviceId);
     const service = await this.prisma.service.findFirst({
@@ -97,6 +105,7 @@ export class ServicesService {
     return this.formatResponse(service);
   }
 
+  // Lista todos os anúncios do próprio freelancer, incluindo os que ainda não foram publicados.
   async findMine(freelancerId: number) {
     const services = await this.prisma.service.findMany({
       where: { freelancerId },
@@ -105,6 +114,7 @@ export class ServicesService {
     return services.map((service) => this.formatResponse(service));
   }
 
+  // Busca o anúncio pelo ID e pelo dono para permitir sua administração.
   async findOwn(serviceId: number, freelancerId: number) {
     this.validateId(serviceId);
     const service = await this.prisma.service.findFirst({
@@ -114,11 +124,13 @@ export class ServicesService {
     return this.formatResponse(service);
   }
 
+  // Salva o anúncio ligado ao freelancer autenticado e remove a nova capa se a gravação falhar.
   async create(
     dto: CreateServiceDto,
     freelancerId: number,
     cover?: ServiceCoverFile,
   ) {
+    //capa 4: storeServiceCover em service-cover.ts salva o arquivo; o Prisma grava sua referência em imageUrl
     const uploadedCover = cover ? await storeServiceCover(cover) : null;
     try {
       const service = await this.prisma.service.create({
@@ -139,6 +151,7 @@ export class ServicesService {
     }
   }
 
+  // Confere o dono, salva as alterações e remove a capa antiga se ela tiver sido substituída.
   async update(
     serviceId: number,
     dto: UpdateServiceDto,
@@ -182,6 +195,7 @@ export class ServicesService {
     return this.formatResponse(saved.service);
   }
 
+  // Exclui o anúncio do próprio freelancer e depois tenta remover seu arquivo de capa.
   async remove(serviceId: number, freelancerId: number) {
     this.validateId(serviceId);
     const service = await this.prisma.service
@@ -201,6 +215,7 @@ export class ServicesService {
     return { message: 'Serviço excluído com sucesso.' };
   }
 
+  //like 4: exige anúncio publicado e grava o vínculo anúncio-cliente em ServiceInterest; duplicidade retorna 409
   async confirmInterest(serviceId: number, clientUserId: number) {
     await this.details(serviceId);
     try {
@@ -218,6 +233,7 @@ export class ServicesService {
     }
   }
 
+  //retira somente o like deste cliente neste anúncio
   async withdrawInterest(serviceId: number, clientUserId: number) {
     this.validateId(serviceId);
     const removed = await this.prisma.serviceInterest.deleteMany({
@@ -228,6 +244,7 @@ export class ServicesService {
     return { message: 'Interesse retirado com sucesso.' };
   }
 
+  // Lista os likes do cliente com os dados dos anúncios, inclusive os que deixaram de ser publicados.
   async myInterests(clientUserId: number) {
     const interests = await this.prisma.serviceInterest.findMany({
       where: { clientUserId },
@@ -245,6 +262,7 @@ export class ServicesService {
     }));
   }
 
+  //interessados: confere o dono do anúncio e consulta likes com nome e e-mail dos clientes; não altera o banco
   async interestedClients(serviceId: number, freelancerId: number) {
     await this.findOwn(serviceId, freelancerId);
     return this.prisma.serviceInterest.findMany({

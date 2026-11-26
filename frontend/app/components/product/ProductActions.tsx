@@ -1,3 +1,5 @@
+// Exemplo visual de ações de um produto, com links e botão ainda sem operação definida.
+
 import Link from "next/link";
 
 export default function ProductActions() {

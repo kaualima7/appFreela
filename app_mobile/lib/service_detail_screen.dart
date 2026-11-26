@@ -1,3 +1,6 @@
+// Consulta e mostra os detalhes do anúncio e o like do cliente.
+// As chamadas ao servidor ficam em freelike_api.dart.
+
 import 'package:flutter/material.dart';
 
 import 'freelike_api.dart';
@@ -31,6 +34,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
     _load();
   }
 
+  // Busca o anúncio e depois verifica se o cliente já deu like antes de preencher a tela.
   Future<void> _load() async {
     setState(() {
       _loading = true;
@@ -58,10 +62,12 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
     }
   }
 
+  //coração: pede à API o estado contrário do like atual; só atualiza a tela depois da resposta
   Future<void> _toggleInterest() async {
     if (_saving) return;
     setState(() => _saving = true);
     try {
+      //pede contrario do estado atual, se nao estava curtido, curte, se estava, retira
       final interested = await widget.api.changeInterest(
         widget.serviceId,
         !_interested,
@@ -82,6 +88,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
     }
   }
 
+  // Mostra uma mensagem curta na parte inferior da tela após a ação do usuário.
   void _message(String text) {
     final messenger = ScaffoldMessenger.of(context);
     messenger.hideCurrentSnackBar();

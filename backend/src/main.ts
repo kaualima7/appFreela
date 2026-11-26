@@ -1,3 +1,5 @@
+// Inicia a API, coloca /api no começo das rotas e ativa a validação dos dados recebidos.
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';

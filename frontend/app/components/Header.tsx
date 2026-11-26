@@ -1,5 +1,7 @@
 "use client";
 
+// Monta o cabeçalho e os links de navegação conforme a sessão e o tipo de conta.
+
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

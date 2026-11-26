@@ -1,3 +1,5 @@
+// Define as chaves usadas para guardar tema, tamanho do texto e modo da barra lateral no navegador.
+
 export const themeStorageKey = "freelike-theme";
 export const textSizeStorageKey = "freelike-text-size";
 export const sidebarStorageKey = "freelike-sidebar-mode";

@@ -1,3 +1,5 @@
+// Recebe GET /api/dashboard/summary e pede o resumo do freelancer ao DashboardService.
+
 import { Controller, Get, Req } from '@nestjs/common';
 import { AccountTypes } from '../auth/account-types.decorator';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';

@@ -1,5 +1,8 @@
 "use client";
 
+// Exemplo da aula ainda sem adaptação completa às rotas atuais de perfil.
+// Os perfis do fluxo atual ficam em /admin/profile e /client/profile.
+
 import Link from "next/link";
 import RefreshButton from "@/app/components/RefreshButton";
 import { useEffect, useState, type FormEvent } from "react";

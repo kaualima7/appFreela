@@ -1,4 +1,7 @@
 "use client";
+// Carrega o projeto indicado na URL e seu contato vinculado.
+// Permite editar o projeto e usa ProjectPayments para os pagamentos.
+
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -29,6 +32,7 @@ function ProjectDetailsContent({ id }: { id: string }) {
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
+    // Carrega o projeto pelo ID da URL e depois busca seu contato pelo clientId recebido.
     async function load() {
       try {
         if (!/^[1-9]\d*$/.test(id) || Number(id) > 2147483647)

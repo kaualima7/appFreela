@@ -1,5 +1,8 @@
 "use client";
 
+// Mostra o perfil público e os anúncios publicados de um freelancer.
+// Quando editable está ativo, também oferece edição do nome e das áreas de atuação.
+
 import { useEffect, useState } from "react";
 import { API_URL } from "@/app/api";
 import FreelancerAreasForm from "./FreelancerAreasForm";
@@ -28,6 +31,7 @@ export default function FreelancerProfile({
     if (!validId) return;
     const controller = new AbortController();
     let active = true;
+    // Consulta o perfil público em /api/freelancers/:id com as áreas e os anúncios publicados.
     async function loadProfile() {
       try {
         const response = await fetch(

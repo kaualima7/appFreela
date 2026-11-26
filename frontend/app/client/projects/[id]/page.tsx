@@ -1,4 +1,7 @@
 "use client";
+// Consulta os detalhes de um projeto vinculado à conta do cliente.
+// Usa ProjectPayments com readOnly para mostrar os pagamentos somente para consulta.
+
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -19,6 +22,7 @@ function ProjectDetails({ id }: { id: string }) {
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
+    // Busca /api/client-portal/projects/:id para mostrar um projeto vinculado ao cliente.
     async function load() {
       try {
         if (!/^[1-9]\d*$/.test(id) || Number(id) > 2147483647)

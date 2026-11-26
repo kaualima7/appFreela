@@ -1,4 +1,7 @@
 "use client";
+// Formulário reutilizado para criar ou editar um contato do freelancer.
+// Pode receber a conta de alguém que deu like para criar o vínculo com esse cliente.
+
 import { useRef, useState, type FormEvent } from "react";
 import { API_URL, managementError } from "../api";
 import { authenticatedFetch } from "../login/auth_service";
@@ -27,6 +30,7 @@ export default function FormularioContato({
   const saving = useRef(false);
   const [error, setError] = useState("");
   const [existing, setExisting] = useState<ClientContact | null>(null);
+  //contato 1: recebe a conta do interessado; POST /api/clients cria contato com clientUserId, PATCH edita um contato existente
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving.current) return;
@@ -38,6 +42,7 @@ export default function FormularioContato({
     setBusy(true);
     setError("");
     try {
+      //consulta os contatos do freelancer para avisar se esta conta já está vinculada
       if (account && !client) {
         const response = await authenticatedFetch(`${API_URL}/clients`);
         if (!response.ok) throw new Error(await managementError(response));
@@ -72,6 +77,7 @@ export default function FormularioContato({
         },
       );
       if (!response.ok) throw new Error(await managementError(response));
+      // Avisa a tela que abriu o formulário para fechar a janela ou atualizar a lista de contatos.
       onSaved(await response.json());
     } catch (error) {
       setError(

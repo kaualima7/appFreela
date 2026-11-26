@@ -1,5 +1,8 @@
 "use client";
 
+// Mostra o painel do freelancer com o resumo recebido de GET /api/dashboard/summary.
+// MonthlyChart desenha os gráficos de recebimentos e likes.
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { API_URL } from "@/app/api";
@@ -43,6 +46,7 @@ function FreelancerDashboard({ name }: { name: string }) {
 
   useEffect(() => {
     const controller = new AbortController();
+    // Busca o resumo em /api/dashboard/summary para preencher os números e os gráficos.
     async function loadSummary() {
       try {
         const response = await authenticatedFetch(

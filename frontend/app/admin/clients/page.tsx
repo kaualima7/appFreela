@@ -1,5 +1,8 @@
 "use client";
 
+// Lista e exclui os contatos do freelancer usando /api/clients.
+// FormularioContato abre o cadastro e a edição dos contatos.
+
 import RefreshButton from "@/app/components/RefreshButton";
 import { useEffect, useState } from "react";
 import { API_URL, managementError } from "@/app/api";
@@ -23,6 +26,7 @@ export default function Clients() {
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
+    // Busca os contatos do freelancer em /api/clients ao abrir ou atualizar a lista.
     async function load() {
       try {
         const response = await authenticatedFetch(`${API_URL}/clients`, {
@@ -56,6 +60,7 @@ export default function Clients() {
     setError("");
     setRevision((previous) => previous + 1);
   }
+  // Envia DELETE para o contato confirmado e atualiza a lista se a API permitir a exclusão.
   async function deleteContact() {
     if (!contactToDelete || deleting) return;
     setDeleting(true);

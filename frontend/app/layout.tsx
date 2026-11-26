@@ -1,3 +1,6 @@
+// Monta a estrutura comum das páginas, carrega os estilos e recupera as preferências visuais.
+// SessionProvider compartilha a sessão; InterestsProvider compartilha os likes.
+
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "bootstrap/dist/css/bootstrap.min.css";

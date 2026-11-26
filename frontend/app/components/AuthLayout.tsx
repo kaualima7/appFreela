@@ -1,3 +1,6 @@
+// Fornece a apresentação comum das telas de login e cadastro.
+// SessionGate redireciona quem já está autenticado.
+
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";

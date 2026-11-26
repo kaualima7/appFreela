@@ -1,3 +1,5 @@
+// Widget reutilizado para mostrar o símbolo e o nome do Freelike nas telas.
+
 import 'package:flutter/material.dart';
 
 class FreelikeBrand extends StatelessWidget {

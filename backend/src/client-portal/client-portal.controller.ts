@@ -1,3 +1,6 @@
+// Oferece as rotas de consulta /api/client-portal para contas de cliente.
+// Permite acompanhar projetos e pagamentos vinculados à conta autenticada.
+
 import {
   Controller,
   Get,

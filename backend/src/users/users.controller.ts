@@ -1,3 +1,6 @@
+// Recebe pedidos de cadastro, consulta, alteração e exclusão de contas em /api/users.
+// UsersService limita a consulta e as alterações à própria conta.
+
 import {
   Body,
   Controller,
@@ -25,6 +28,7 @@ export class UsersController {
     return this.usersService.createUser(dto);
   }
 
+  // GET /api/users: usado pela Web para recuperar os dados da própria conta autenticada.
   @Get()
   findAll(@Req() request: AuthenticatedRequest) {
     return this.usersService.getAllUsers(request.user.sub);

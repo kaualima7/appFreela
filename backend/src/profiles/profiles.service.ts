@@ -1,3 +1,5 @@
+// Cria e altera o perfil da conta autenticada e salva as áreas de atuação do freelancer.
+
 import {
   NotFoundException,
   BadRequestException,
@@ -11,6 +13,7 @@ import { PrismaService } from '../database/prisma.service';
 @Injectable()
 export class ProfilesService {
   constructor(private readonly prisma: PrismaService) {}
+  // Confere se a conta existe e ainda não tem perfil antes de criar o registro.
   async create(dto: CreateProfileDto, userId: number) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -38,6 +41,7 @@ export class ProfilesService {
     });
   }
 
+  // Consulta nome completo e foto pelo ID da conta autenticada.
   async findOwn(userId: number) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -47,6 +51,7 @@ export class ProfilesService {
     return profile;
   }
 
+  // Salva na conta do freelancer a seleção já validada pelo UpdateSpecialtiesDto.
   async updateSpecialties(freelancerId: number, specialties: string[]) {
     return this.prisma.user.update({
       where: { id: freelancerId, accountType: 'FREELANCER' },
@@ -55,6 +60,7 @@ export class ProfilesService {
     });
   }
 
+  // Exige que o perfil solicitado pertença à conta autenticada.
   async findOne(id: number, userId: number) {
     const profile = await this.prisma.profile.findFirst({
       where: { id, userId },
@@ -67,6 +73,7 @@ export class ProfilesService {
     return profile;
   }
 
+  // Confere o dono do perfil antes de salvar os campos recebidos.
   async update(id: number, dto: UpdateProfileDto, userId: number) {
     await this.findOne(id, userId);
 

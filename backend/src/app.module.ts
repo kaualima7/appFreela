@@ -1,3 +1,5 @@
+// Reúne os módulos da API: contas, anúncios, contatos, projetos, pagamentos e painel.
+
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';

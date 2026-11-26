@@ -1,5 +1,8 @@
 "use client";
 
+// Consulta a conta autenticada e compartilha os dados da sessão entre os componentes.
+// Refaz a consulta ao navegar ou quando a sessão muda.
+
 import {
   createContext,
   useContext,
@@ -34,11 +37,13 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
     error: string;
   }>({ path: null, revision: -1, user: null, error: "" });
 
+  // Confere a sessão na API ao abrir ou mudar de página; a limpeza cancela a consulta ao sair.
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
     const timeout = setTimeout(() => controller.abort(), 15000);
 
+    // Consulta currentUser em login/auth_service.ts e compartilha a conta encontrada com as telas.
     async function verify() {
       try {
         const user = await currentUser(controller.signal);
@@ -112,6 +117,7 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Permite que os componentes consultem a conta e o estado da verificação de sessão.
 export function useSession() {
   const session = useContext(SessionContext);
   if (!session) throw new Error("Sessão não inicializada.");

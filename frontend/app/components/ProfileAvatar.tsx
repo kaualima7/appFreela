@@ -1,5 +1,7 @@
 "use client";
 
+// Mostra a foto do perfil ou as iniciais do nome quando não há imagem disponível.
+
 import Image from "next/image";
 import { useState } from "react";
 

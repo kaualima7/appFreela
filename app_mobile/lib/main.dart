@@ -1,3 +1,6 @@
+// Inicia o app Flutter e alterna entre login e vitrine.
+// Cria uma FreelikeApi compartilhada pelas telas e retorna ao login quando a sessão expira.
+
 import 'package:flutter/material.dart';
 
 import 'catalog_screen.dart';
@@ -5,6 +8,7 @@ import 'freelike_api.dart';
 import 'freelike_theme.dart';
 import 'login_screen.dart';
 
+//app: inicia a interface; após o login, _openCatalog troca LoginScreen por CatalogScreen
 void main() => runApp(const FreelikeApp());
 
 class FreelikeApp extends StatefulWidget {
@@ -20,6 +24,7 @@ class _FreelikeAppState extends State<FreelikeApp> {
   bool _signedIn = false;
   String? _loginNotice;
 
+  // É chamado após o login ou cadastro aceito para trocar a tela inicial pela vitrine.
   void _openCatalog() {
     setState(() {
       _loginNotice = null;
@@ -29,6 +34,7 @@ class _FreelikeAppState extends State<FreelikeApp> {
 
   void _expireSession() => _showLogin('Sua sessão expirou. Entre novamente.');
 
+  // Apaga o token, fecha as telas abertas e volta ao login, com aviso quando necessário.
   void _showLogin([String? notice]) {
     _api.logout();
     _navigator.currentState?.popUntil((route) => route.isFirst);

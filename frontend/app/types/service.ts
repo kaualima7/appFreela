@@ -1,3 +1,5 @@
+// Define os formatos dos anúncios, perfis públicos e likes recebidos da API.
+
 export type PublicService = {
   id: number;
   title: string;

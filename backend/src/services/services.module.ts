@@ -1,3 +1,5 @@
+// Registra os controllers e serviços de anúncios e likes para uso pelo NestJS.
+
 import { Module } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { ServicesController } from './services.controller';

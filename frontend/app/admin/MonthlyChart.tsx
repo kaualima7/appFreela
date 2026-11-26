@@ -1,5 +1,8 @@
 "use client";
 
+// Desenha o gráfico com os valores mensais recebidos pela página do painel.
+// A seleção de um mês mostra seu valor; este componente não consulta a API.
+
 import { useId, useState } from "react";
 import { money } from "@/app/types/management";
 import styles from "./dashboard.module.css";

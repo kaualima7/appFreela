@@ -1,3 +1,5 @@
+// Abre a página de cadastro e lê ?tipo=freelancer para pré-selecionar esse tipo de conta.
+
 import RegisterForm from "./RegisterForm";
 
 export default async function RegisterPage({

@@ -1,3 +1,5 @@
+// Mostra um anúncio do freelancer com as ações de editar, excluir e consultar interessados.
+
 import type { FreelancerService } from "@/app/types/service";
 import Link from "next/link";
 import ImagemAnuncio from "./ImagemAnuncio";

@@ -1,5 +1,7 @@
 "use client";
 
+// Monta o menu lateral do freelancer, destaca a página atual e oferece a opção Sair.
+
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

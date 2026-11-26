@@ -1,5 +1,8 @@
 "use client";
 
+// Altera tema, tamanho do texto e modo da barra lateral.
+// As preferências são guardadas no navegador pelo localStorage.
+
 import { useState } from "react";
 import {
   sidebarStorageKey,
@@ -26,6 +29,7 @@ export default function AccountSettings() {
   });
   const [saveError, setSaveError] = useState(false);
 
+  // Salva a preferência neste navegador para recuperá-la em novos acessos.
   function savePreference(key: string, value: string) {
     try {
       localStorage.setItem(key, value);

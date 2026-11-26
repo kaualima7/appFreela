@@ -1,3 +1,6 @@
+// Valida, salva, lê e remove os arquivos de capa dos anúncios.
+// O banco guarda a referência da capa; a imagem fica no diretório configurado.
+
 import {
   BadRequestException,
   FileTypeValidator,
@@ -46,6 +49,7 @@ function storedCoverName(imageUrl: string | null) {
   return coverNamePattern.test(name) ? name : null;
 }
 
+// Completa o endereço das capas salvas localmente para que possam ser carregadas pela interface.
 export function publicCoverUrl(imageUrl: string | null) {
   if (!storedCoverName(imageUrl)) return imageUrl;
   const apiUrl =
@@ -54,6 +58,7 @@ export function publicCoverUrl(imageUrl: string | null) {
   return apiUrl.replace(/\/$/, '') + imageUrl;
 }
 
+//capa 5: valida a imagem, gera nome único e grava no diretório configurado; padrão: uploads/service-covers
 export async function storeServiceCover(cover: ServiceCoverFile) {
   if (cover.size > serviceCoverLimit)
     throw new BadRequestException('Escolha uma imagem de até 5 MB.');
@@ -77,6 +82,7 @@ export async function storeServiceCover(cover: ServiceCoverFile) {
   return coverPath + name;
 }
 
+// Remove somente capas com o padrão de nome gerado por esta API.
 export async function removeServiceCover(imageUrl: string | null) {
   const name = storedCoverName(imageUrl);
   if (!name) return;
@@ -87,6 +93,7 @@ export async function removeServiceCover(imageUrl: string | null) {
   }
 }
 
+//capa 6: lê o arquivo para responder ao GET /api/services/covers/:fileName definido no controller
 export async function readServiceCover(name: string) {
   if (!coverNamePattern.test(name))
     throw new NotFoundException('Imagem não encontrada.');

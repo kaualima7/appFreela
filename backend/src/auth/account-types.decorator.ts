@@ -1,3 +1,5 @@
+// Marca quais tipos de conta podem usar uma rota; JwtAuthGuard faz essa conferência.
+
 import { SetMetadata } from '@nestjs/common';
 import type { AccountType } from '../generated/prisma/client';
 

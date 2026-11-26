@@ -1,3 +1,6 @@
+// Define os formatos de contatos e projetos usados pela Web.
+// Também traduz as situações do projeto e formata valores e datas para exibição.
+
 export type ClientContact = {
   id: number;
   name: string;

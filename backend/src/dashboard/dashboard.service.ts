@@ -1,3 +1,6 @@
+// Calcula os totais e os dados dos últimos seis meses para o painel do freelancer.
+// Soma os registros pagos e consulta likes, anúncios, projetos e contatos.
+
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { Prisma } from '../generated/prisma/client';
@@ -19,6 +22,7 @@ function localMonthKey(date: Date) {
 export class DashboardService {
   constructor(private readonly prisma: PrismaService) {}
 
+  // Reúne os dados do próprio freelancer para montar os totais e os gráficos do painel.
   async summary(freelancerId: number) {
     const [year, month] = localMonthKey(new Date()).split('-').map(Number);
     const months = Array.from(
@@ -32,11 +36,13 @@ export class DashboardService {
       ]),
     );
     const firstMonth = months[0];
+    // Entram no total recebido somente os registros com situação PAID.
     const paidPayments = {
       status: 'PAID',
       project: { client: { userId: freelancerId } },
     };
 
+    // Agrupa as consultas ao banco em uma transação para montar um resumo consistente.
     const [total, payments, likes, services, projects, contacts] =
       await this.prisma.$transaction([
         this.prisma.payment.aggregate({

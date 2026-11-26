@@ -1,5 +1,8 @@
 "use client";
 
+// Usa SessionGate para permitir a área /admin somente a contas de freelancer.
+// As páginas de usuários e perfis são identificadas como exemplos da aula.
+
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import SessionGate from "@/app/components/SessionGate";

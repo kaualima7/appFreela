@@ -1,3 +1,5 @@
+// Exemplo de cartão de produto montado com ProductInfo e ProductActions.
+
 import ProductInfo from "./ProductInfo";
 import ProductActions from "./ProductActions";
 

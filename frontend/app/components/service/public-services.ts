@@ -1,3 +1,6 @@
+// Consulta os anúncios publicados em GET /api/services, sem exigir login.
+// É reutilizado pela vitrine e pelo destaque da página inicial.
+
 import { API_URL } from "@/app/api";
 import type { PublicService } from "@/app/types/service";
 

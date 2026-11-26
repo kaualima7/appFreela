@@ -1,5 +1,8 @@
 "use client";
 
+// Organiza o cabeçalho, a barra lateral e o conteúdo das páginas conforme a conta.
+// Também compartilha a preferência de exibição da barra lateral.
+
 import { usePathname } from "next/navigation";
 import Header from "./Header";
 import { createContext, useContext, useState, type ReactNode } from "react";

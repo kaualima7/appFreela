@@ -1,5 +1,8 @@
 "use client";
 
+// Mostra a vitrine de anúncios publicados e filtra a lista por texto e categoria.
+// A consulta à API fica em components/service/public-services.ts.
+
 import RefreshButton from "@/app/components/RefreshButton";
 
 import { useEffect, useState } from "react";
@@ -8,6 +11,7 @@ import CartaoAnuncio from "@/app/components/service/CartaoAnuncio";
 import type { PublicService } from "@/app/types/service";
 import { serviceCategories } from "@/app/types/service-categories";
 
+// Remove acentos e diferenças entre maiúsculas e minúsculas para facilitar a busca.
 function normalizeSearch(value: string) {
   return value
     .normalize("NFD")
@@ -27,6 +31,7 @@ export default function ExplorePage() {
   const query = normalizeSearch(search);
   const selectedCategory = normalizeSearch(category);
   const hasFilters = Boolean(query || selectedCategory);
+  // Filtra a lista já carregada, buscando por título, categoria ou nome do profissional.
   const filteredServices = services.filter((service) => {
     if (
       selectedCategory && normalizeSearch(service.category) !== selectedCategory
@@ -52,6 +57,7 @@ export default function ExplorePage() {
     let active = true;
     const timeout = setTimeout(() => controller.abort(), 15000);
 
+    // Carrega a vitrine usando loadPublicServices; os filtros abaixo são aplicados no navegador.
     async function loadServices() {
       try {
         const publishedServices = await loadPublicServices(controller.signal);

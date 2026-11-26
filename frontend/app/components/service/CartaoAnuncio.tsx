@@ -1,5 +1,7 @@
 "use client";
 
+// Mostra o resumo público de um anúncio, com imagem, profissional, preço e links.
+
 import type { PublicService } from "@/app/types/service";
 import ImagemAnuncio from "./ImagemAnuncio";
 import Link from "next/link";

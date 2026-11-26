@@ -1,5 +1,7 @@
 "use client";
 
+// Permite ajustar o enquadramento da capa e preparar a imagem recortada para o envio.
+
 import Image from "next/image";
 import { useRef, useState, type PointerEvent } from "react";
 
@@ -8,6 +10,7 @@ type CoverFrame = typeof defaultCoverFrame;
 type ImageSize = { width: number; height: number };
 const coverRatio = 8 / 5;
 
+// Calcula a parte da imagem que será usada na capa, conforme posição e zoom escolhidos.
 function coverCrop({ width, height }: ImageSize, frame: CoverFrame) {
   const cropWidth = Math.min(width, height * coverRatio) / frame.zoom;
   const cropHeight = cropWidth / coverRatio;
@@ -20,6 +23,7 @@ function coverCrop({ width, height }: ImageSize, frame: CoverFrame) {
   };
 }
 
+//prepara o recorte escolhido na proporção 8:5 e exporta a imagem para o envio
 export async function prepareServiceCover(url: string, frame: CoverFrame) {
   const image = new window.Image();
   image.src = url;
@@ -98,6 +102,7 @@ export default function EditorCapaAnuncio({
     };
   }
 
+  // Converte o movimento do mouse ou toque em uma nova posição para o recorte da capa.
   function moveCover(event: PointerEvent<HTMLDivElement>) {
     const start = drag.current;
     if (disabled || !start || !crop || start.pointerId !== event.pointerId) return;

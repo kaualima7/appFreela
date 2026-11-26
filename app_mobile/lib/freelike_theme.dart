@@ -1,3 +1,5 @@
+// Define as cores e os estilos compartilhados pelos componentes do app.
+
 import 'package:flutter/material.dart';
 
 const freelikeBlue = Color(0xFF24588C);

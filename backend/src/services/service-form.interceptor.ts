@@ -1,3 +1,6 @@
+// Prepara o pedido que traz os dados do anúncio junto com uma imagem.
+// Lê o campo service como JSON antes da validação do DTO.
+
 import {
   BadRequestException,
   Injectable,
@@ -9,6 +12,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import type { Request } from 'express';
 import { serviceCoverLimit } from './service-cover';
 
+//recebe o arquivo do campo cover; ServiceFormInterceptor lê o JSON do campo service antes da validação do DTO
 export const ServiceCoverUpload = FileInterceptor('cover', {
   limits: {
     fileSize: serviceCoverLimit + 1,

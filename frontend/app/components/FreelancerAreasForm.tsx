@@ -1,5 +1,7 @@
 "use client";
 
+// Carrega as áreas de atuação aceitas pela API e salva a seleção do freelancer.
+
 import { useEffect, useState, type FormEvent } from "react";
 import { API_URL, managementError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
@@ -23,6 +25,7 @@ export default function FreelancerAreasForm({
 
   useEffect(() => {
     const controller = new AbortController();
+    // Busca na API as opções permitidas para preencher a seleção de áreas de atuação.
     async function loadOptions() {
       try {
         const response = await authenticatedFetch(
@@ -51,6 +54,7 @@ export default function FreelancerAreasForm({
     return () => controller.abort();
   }, [revision]);
 
+  // Envia as áreas selecionadas por PATCH /api/profiles/me/specialties.
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!options || saving) return;

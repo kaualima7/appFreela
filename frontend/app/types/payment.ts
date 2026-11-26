@@ -1,3 +1,6 @@
+// Define os formatos dos pagamentos e calcula o total recebido e o saldo do projeto.
+// Os cálculos usam centavos inteiros para evitar diferenças de arredondamento.
+
 import type { Project } from "./management";
 export type ClientProject = Omit<Project, "clientId"> & {
   projectOwner: { id: number; name: string };
@@ -21,6 +24,7 @@ function toCents(amount: string) {
   return BigInt(whole) * BigInt(100) + BigInt(fraction.padEnd(2, "0"));
 }
 
+// Soma somente os registros PAID e desconta do valor combinado; o saldo mínimo é zero.
 export function projectPaymentSummary(projectValue: string, payments: Payment[]) {
   const agreed = toCents(projectValue);
   const paid = payments.reduce(

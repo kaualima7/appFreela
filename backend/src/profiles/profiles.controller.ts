@@ -1,3 +1,6 @@
+// Recebe consultas e alterações do próprio perfil em /api/profiles.
+// As rotas de áreas de atuação são exclusivas do freelancer.
+
 import {
   Body,
   Controller,

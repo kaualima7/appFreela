@@ -1,4 +1,6 @@
 "use client";
+// Consulta o próprio anúncio pelo ID da URL e abre FormularioAnuncio para editá-lo.
+
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -19,6 +21,7 @@ function EditServiceContent({ id }: { id: string }) {
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
+    // Busca /api/services/mine/:id para preencher o formulário com os dados do próprio anúncio.
     async function load() {
       try {
         if (!/^[1-9]\d*$/.test(id) || Number(id) > 2147483647)

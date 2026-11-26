@@ -1,5 +1,8 @@
 "use client";
 
+// Lista os projetos do freelancer e carrega os contatos disponíveis.
+// ProjectFormDialog abre o cadastro; o link de cada projeto leva aos detalhes.
+
 import RefreshButton from "@/app/components/RefreshButton";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -25,6 +28,7 @@ export default function Projects() {
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
+    // Busca projetos e contatos ao mesmo tempo; os contatos também alimentam o formulário de cadastro.
     async function load() {
       try {
         const [projectsResponse, clientsResponse] = await Promise.all([

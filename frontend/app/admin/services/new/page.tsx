@@ -1,4 +1,6 @@
 "use client";
+// Abre FormularioAnuncio para criar um anúncio e retorna à lista depois de salvar.
+
 import { useRouter } from "next/navigation";
 import FormularioAnuncio from "@/app/components/service/FormularioAnuncio";
 export default function NewService() {

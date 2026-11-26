@@ -1,5 +1,8 @@
 "use client";
 
+// Mostra o formulário de login da Web.
+// submitForm envia os dados à API; auth_service.ts salva o token e escolhe a página de destino.
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -9,21 +12,28 @@ import { accountHome, saveSession, type AuthSession } from "./auth_service";
 
 export default function LoginPage() {
   const router = useRouter();
+  //guarda os valores digitados no login; setEmail e setPassword atualizam esses estados
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  //executa a tentativa de login quando o formulário é enviado
   async function submitForm(event: FormEvent<HTMLFormElement>) {
+    //impede o envio padrão do navegador para controlar o login pelo código
     event.preventDefault();
     if (saving) return;
     setSaving(true);
     setError("");
     try {
+      //envia o pedido de login para a API e aguarda a resposta, guardada em response
+      //post /auth/login é recebido pelo método login em backend/src/auth/auth.controller.ts
       const response = await fetch(`${API_URL}/auth/login`, {
+        //usa o método POST e informa que os dados vão em formato JSON
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        //envia e-mail e senha digitados; trim tira espaços das pontas do e-mail
         body: JSON.stringify({ email: email.trim(), password }),
         signal: AbortSignal.timeout(15000),
       });
@@ -40,6 +50,7 @@ export default function LoginPage() {
         );
         return;
       }
+      // Login aceito: lê o token e os dados da conta para salvar a sessão e abrir a página de destino.
       const session: AuthSession = await response.json();
       saveSession(session);
       router.replace(accountHome(session.user.accountType));
@@ -59,6 +70,7 @@ export default function LoginPage() {
           {error}
         </div>
       )}
+      {/* o envio do formulário chama submitForm, por exemplo ao clicar em Entrar */}
       <form onSubmit={submitForm} aria-busy={saving}>
         <div className="mb-3">
           <label htmlFor="login-email" className="form-label">

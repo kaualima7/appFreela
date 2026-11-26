@@ -1,3 +1,5 @@
+// Monta a página inicial do Freelike, com a apresentação e os links para explorar os serviços.
+
 import Link from "next/link";
 import type { Metadata } from "next";
 import HomeHeroPhoto from "./components/HomeHeroPhoto";

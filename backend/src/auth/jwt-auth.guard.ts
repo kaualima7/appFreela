@@ -1,3 +1,6 @@
+// Confere o token antes de liberar uma rota protegida.
+// Também verifica se o tipo de conta pode realizar a operação.
+
 import {
   CanActivate,
   ExecutionContext,
@@ -21,6 +24,7 @@ export class JwtAuthGuard implements CanActivate {
     private readonly users: UsersService,
   ) {}
 
+  // Executa antes do controller: libera rotas públicas e confere a identidade nas demais.
   async canActivate(context: ExecutionContext): Promise<boolean> {
     if (
       this.reflector.getAllAndOverride<boolean>(IS_PUBLIC, [
@@ -30,6 +34,7 @@ export class JwtAuthGuard implements CanActivate {
     )
       return true;
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    // O token deve chegar no cabeçalho Authorization no formato Bearer seguido do token.
     const authorization = request.headers.authorization;
     const match = authorization?.match(/^Bearer ([^ ]+)$/i);
     if (!match) throw new UnauthorizedException('Bearer token ausente.');
@@ -47,10 +52,12 @@ export class JwtAuthGuard implements CanActivate {
       }
       const user = await this.users.findById(payload.sub);
       if (!user) throw new Error('Usuário não existe.');
+      // Guarda a identidade conferida para o controller usar; o ID vem do token validado.
       request.user = { sub: user.id, accountType: user.accountType };
     } catch {
       throw new UnauthorizedException('Token inválido ou expirado.');
     }
+    // Se a conta estiver autenticada, mas seu tipo não for permitido, responde 403.
     const accountTypes = this.reflector.getAllAndOverride<AccountType[]>(
       ACCOUNT_TYPES,
       [context.getHandler(), context.getClass()],

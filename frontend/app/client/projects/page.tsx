@@ -1,5 +1,7 @@
 "use client";
 
+// Lista os projetos vinculados à conta do cliente por GET /api/client-portal/projects.
+
 import RefreshButton from "@/app/components/RefreshButton";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -15,6 +17,7 @@ export default function ClientProjects() {
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
+    // Busca os projetos pela área de consulta do cliente; a API aplica o vínculo da conta.
     async function load() {
       try {
         const response = await authenticatedFetch(

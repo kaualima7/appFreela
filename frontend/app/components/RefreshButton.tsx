@@ -1,3 +1,5 @@
+// Botão reutilizado para atualizar uma consulta; a página informa qual função executar.
+
 export default function RefreshButton({
   label,
   onClick,

@@ -1,3 +1,6 @@
+// Valida título, descrição, categoria, preço e publicação de um anúncio.
+// O ValidationPipe de main.ts aplica essas regras e responde 400 se os dados forem inválidos.
+
 import {
   IsBoolean,
   IsString,

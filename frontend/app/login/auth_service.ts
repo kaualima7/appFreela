@@ -1,3 +1,6 @@
+// Cuida do token e das chamadas autenticadas da Web.
+// O token fica no localStorage; authenticatedFetch o envia para a API.
+
 import { API_URL } from "@/app/api";
 
 const TOKEN_KEY = "auth_token";
@@ -12,30 +15,36 @@ export type SessionUser = {
 };
 export type AuthSession = { access_token: string; user: SessionUser };
 
+// Escolhe o destino após entrar: cliente vai à vitrine e freelancer vai ao painel.
 export function accountHome(accountType: AccountType) {
   return accountType === "CLIENT" ? "/explorar" : "/admin";
 }
 
+// Lê o token salvo no navegador para usar nos pedidos à API.
 export function getToken(): string | null {
   return typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
 }
 
+// Guarda o token recebido e avisa os componentes de que a sessão mudou.
 export function saveSession(session: AuthSession) {
   localStorage.setItem(TOKEN_KEY, session.access_token);
   window.dispatchEvent(new Event(SESSION_CHANGED));
 }
 
+// Apaga o token e avisa os componentes para verificarem novamente a sessão.
 export function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
   window.dispatchEvent(new Event(SESSION_CHANGED));
 }
 
+// Sai da conta apagando o token e abre a página inicial.
 export function logout() {
   localStorage.removeItem(TOKEN_KEY);
   // O recarregamento evita disputa com o redirecionamento da área protegida.
   window.location.replace("/");
 }
 
+// Faz a chamada com Authorization: Bearer e limpa o token atual se a API responder 401.
 export async function authenticatedFetch(
   url: string,
   options: RequestInit = {},
@@ -54,6 +63,7 @@ export async function authenticatedFetch(
   return response;
 }
 
+// Consulta GET /api/users e recupera os dados da única conta devolvida pela API.
 export async function currentUser(
   signal: AbortSignal,
 ): Promise<SessionUser | null> {

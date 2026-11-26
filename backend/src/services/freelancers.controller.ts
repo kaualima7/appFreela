@@ -1,3 +1,5 @@
+// Recebe GET /api/freelancers/:id e devolve o perfil público com os anúncios publicados.
+
 import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import { Public } from '../auth/public.decorator';
 import { ServicesService } from './services.service';

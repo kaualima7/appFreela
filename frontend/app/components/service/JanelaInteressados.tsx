@@ -1,5 +1,8 @@
 "use client";
 
+// Lista quem deu like no anúncio do freelancer.
+// A ação Adicionar como contato abre FormularioContato com os dados da conta selecionada.
+
 import { useEffect, useState } from "react";
 import { API_URL, interestError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
@@ -36,6 +39,7 @@ export default function JanelaInteressados({
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
     let active = true;
+    //interessados: GET /api/services/:id/interests busca quem deu like e preenche a janela do freelancer
     async function load() {
       try {
         const response = await authenticatedFetch(
@@ -77,6 +81,7 @@ export default function JanelaInteressados({
     };
   }, [service.id, requestVersion]);
 
+  //contato: Adicionar como contato seleciona clientAccount e abre FormularioContato com nome, e-mail e ID da conta
   if (clientAccount)
     return (
       <FormularioContato

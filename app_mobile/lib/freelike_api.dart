@@ -1,3 +1,6 @@
+// Concentra as chamadas do app à mesma API usada pela Web.
+// Cuida do login de cliente, cadastro, anúncios, likes e token mantido em memória.
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
@@ -22,6 +25,7 @@ class FreelikeApi {
   final _http = http.Client();
   String? _token;
 
+  // Usa API_BASE_URL se informado; no emulador Android, 10.0.2.2 aponta para o computador.
   Uri get _baseUrl {
     if (_configuredUrl.isEmpty) {
       return kIsWeb
@@ -33,6 +37,7 @@ class FreelikeApi {
     );
   }
 
+  //usa POST /api/auth/login da mesma API da Web; aceita CLIENT e guarda o token somente em memória
   Future<void> login(String email, String password) async {
     final json =
         await _request(
@@ -42,6 +47,49 @@ class FreelikeApi {
               authenticated: false,
             )
             as Map<String, dynamic>;
+    _startClientSession(json);
+  }
+
+  // Cria uma conta CLIENT em POST /api/auth/register e inicia a sessão com o token recebido.
+  Future<void> registerClient(
+    String name,
+    String email,
+    String password,
+  ) async {
+    try {
+      final json =
+          await _request(
+                'POST',
+                'auth/register',
+                body: {
+                  'name': name,
+                  'email': email,
+                  'password': password,
+                  'accountType': 'CLIENT',
+                },
+                authenticated: false,
+              )
+              as Map<String, dynamic>;
+      _startClientSession(json);
+    } on ApiError catch (error) {
+      if (error.statusCode == 409) {
+        throw const ApiError(
+          'Este e-mail já está cadastrado.',
+          statusCode: 409,
+        );
+      }
+      if (error.statusCode == 400) {
+        throw const ApiError(
+          'Confira o nome, o e-mail e a senha.',
+          statusCode: 400,
+        );
+      }
+      rethrow;
+    }
+  }
+
+  // Aceita somente conta de cliente no app e guarda o token até sair ou encerrar a execução.
+  void _startClientSession(Map<String, dynamic> json) {
     final user = json['user'] as Map<String, dynamic>;
     if (user['accountType'] == 'FREELANCER') {
       throw const ApiError('A área de trabalho do freelancer fica na web.');
@@ -56,6 +104,7 @@ class FreelikeApi {
 
   void close() => _http.close();
 
+  //vitrine: GET /api/services retorna os anúncios publicados; ServiceOffer.fromJson organiza os dados para a tela
   Future<List<ServiceOffer>> catalog() async {
     final json = await _request('GET', 'services') as List<dynamic>;
     return json
@@ -63,11 +112,13 @@ class FreelikeApi {
         .toList();
   }
 
+  // Consulta os detalhes do anúncio em GET /api/services/:id.
   Future<ServiceOffer> service(int serviceId) async {
     final json = await _request('GET', 'services/$serviceId');
     return ServiceOffer.fromJson(json as Map<String, dynamic>);
   }
 
+  // Consulta /api/interests e verifica se o anúncio está entre os likes do cliente.
   Future<bool> isInterested(int serviceId) async {
     final json = await _request('GET', 'interests') as List<dynamic>;
     return json.any(
@@ -75,6 +126,7 @@ class FreelikeApi {
     );
   }
 
+  //like: POST ou DELETE /api/services/:id/interest; mesma API e registros usados pela Web
   Future<bool> changeInterest(int serviceId, bool interested) async {
     try {
       await _request(
@@ -91,6 +143,7 @@ class FreelikeApi {
     }
   }
 
+  // Ajusta endereços locais das capas para que o app consiga acessá-las pelo endereço da API.
   String? coverUrl(String? imageUrl) {
     if (imageUrl == null || imageUrl.trim().isEmpty) return null;
     final uri = Uri.tryParse(imageUrl.trim());
@@ -109,6 +162,7 @@ class FreelikeApi {
     return uri.toString();
   }
 
+  //centraliza HTTP, JSON, token Bearer, timeout e erros; 401 autenticado limpa a sessão e retorna ao login
   Future<dynamic> _request(
     String method,
     String path, {

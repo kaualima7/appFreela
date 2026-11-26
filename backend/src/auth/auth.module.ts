@@ -1,3 +1,6 @@
+// Configura os tokens de login e aplica JwtAuthGuard às rotas da API.
+// O token dura um dia; a chave usada para assiná-lo vem de JWT_SECRET.
+
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';

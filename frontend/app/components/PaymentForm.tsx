@@ -1,5 +1,8 @@
 "use client";
 
+// Formulário para adicionar parcelas, registrar recebimentos e editar pagamentos.
+// Salva os registros pela API em /api/payments.
+
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { API_URL, managementError } from "../api";
 import { authenticatedFetch } from "../login/auth_service";
@@ -76,6 +79,7 @@ export default function PaymentForm({
     if (!editing) formRef.current?.querySelector("input")?.focus();
   }, [editing]);
 
+  // Confere os campos e envia POST para criar ou PATCH para alterar o registro em /api/payments.
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving.current) return;
@@ -91,6 +95,7 @@ export default function PaymentForm({
     setBusy(true);
     setError("");
     try {
+      // Só envia data de recebimento quando a situação é PAID; nas demais, envia null.
       const receivedAt =
         status === "PAID" ? paymentDate(paidAt, payment?.paidAt) : null;
       const receiptFields = {

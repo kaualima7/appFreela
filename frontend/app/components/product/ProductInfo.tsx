@@ -1,3 +1,5 @@
+// Mostra os textos e o preço fixos do produto de exemplo.
+
 import Link from "next/link";
 export default function ProductInfo() {
     return (

@@ -1,5 +1,8 @@
 "use client";
 
+// Mostra o coração do anúncio e a confirmação do like.
+// Usa SessionProvider para identificar a conta e InterestsProvider para salvar a alteração.
+
 import RefreshButton from "@/app/components/RefreshButton";
 
 import Link from "next/link";
@@ -33,6 +36,7 @@ export default function BotaoInteresse({
   const pending = isPending(service.id);
   const requiresLogin = dialog === "login" || (!checking && !user);
 
+  //like 1: confirmar chama update(true); retirar chama update(false) -> changeInterest em InterestsProvider.tsx
   async function update(interested: boolean) {
     setError("");
     const result = await changeInterest(service, interested);

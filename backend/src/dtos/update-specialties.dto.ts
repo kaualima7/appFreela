@@ -1,3 +1,6 @@
+// Valida a lista de áreas de atuação, sem repetições e com opções aceitas pela API.
+// O ValidationPipe de main.ts aplica essas regras e responde 400 se os dados forem inválidos.
+
 import { ArrayUnique, IsArray, IsIn } from 'class-validator';
 import { freelancerSpecialties } from '../profiles/freelancer-specialties';
 

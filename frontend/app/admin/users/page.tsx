@@ -1,5 +1,8 @@
 "use client";
 
+// Exemplo da aula ainda sem adaptação completa ao fluxo atual do Freelike.
+// Contém uma interface de contas; o cadastro atual fica em register/RegisterForm.tsx.
+
 import { getToken, authenticatedFetch } from "@/app/login/auth_service";
 import { useEffect, useState, type FormEvent } from "react";
 import { API_URL, responseError } from "@/app/api";

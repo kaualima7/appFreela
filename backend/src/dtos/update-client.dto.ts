@@ -1,3 +1,6 @@
+// Valida os campos que podem ser enviados na edição de um contato.
+// O ValidationPipe de main.ts aplica essas regras e responde 400 se os dados forem inválidos.
+
 import {
   IsEmail,
   IsOptional,
@@ -14,6 +17,7 @@ export class UpdateClientDto {
   @IsInt()
   @IsPositive()
   @Max(2147483647)
+  // null retira o vínculo com a conta do cliente; omitir mantém o vínculo atual.
   clientUserId?: number | null;
 
   @IsOptional()

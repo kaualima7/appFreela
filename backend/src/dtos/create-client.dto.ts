@@ -1,3 +1,6 @@
+// Valida os dados necessários para cadastrar um contato.
+// O ValidationPipe de main.ts aplica essas regras e responde 400 se os dados forem inválidos.
+
 import {
   IsEmail,
   IsOptional,
@@ -14,6 +17,7 @@ export class CreateClientDto {
   @IsInt()
   @IsPositive()
   @Max(2147483647)
+  // Opcional: liga o contato a uma conta de cliente; o dono do contato vem do token.
   clientUserId?: number;
 
   @IsString()

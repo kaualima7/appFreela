@@ -1,5 +1,8 @@
 "use client";
 
+// Mostra os pagamentos e o saldo de um projeto, na área do freelancer ou do cliente.
+// readOnly escolhe as rotas de consulta do cliente e oculta as ações de edição.
+
 import RefreshButton from "@/app/components/RefreshButton";
 import { useEffect, useState } from "react";
 import { API_URL, managementError } from "../api";
@@ -30,6 +33,7 @@ export default function ProjectPayments({
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
+    // Usa /payments para o freelancer e /client-portal/payments para o cliente, filtrando pelo projeto.
     async function load() {
       try {
         const response = await authenticatedFetch(
@@ -70,11 +74,13 @@ export default function ProjectPayments({
     setError("");
     setRevision((previous) => previous + 1);
   }
+  // Escolhe a ação que PaymentForm deve abrir: parcela, recebimento ou edição.
   function openForm(action: PaymentFormAction) {
     setSuccess("");
     setFormAction(action);
   }
 
+  // Calcula recebido e saldo com projectPaymentSummary, em types/payment.ts.
   const summary = projectPaymentSummary(projectValue, payments);
   const form = !readOnly && formAction && (
     <PaymentForm

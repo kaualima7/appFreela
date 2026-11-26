@@ -1,5 +1,8 @@
 "use client";
 
+// Mostra o formulário de cadastro de cliente ou freelancer.
+// Envia os dados à API e, após criar a conta, salva o token recebido.
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -25,6 +28,7 @@ export default function RegisterForm({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  //cad 1: recebe o envio do formulário com nome, e-mail, senha e tipo de conta
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving) return;
@@ -35,6 +39,7 @@ export default function RegisterForm({
     setSaving(true);
     setError("");
     try {
+      //cad 2: envia POST /api/auth/register -> backend/src/auth/auth.controller.ts, método register
       const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -59,6 +64,7 @@ export default function RegisterForm({
         );
         return;
       }
+      //cad 6: recebe token e usuário; auth_service.ts guarda o token e escolhe o destino da conta
       const session: AuthSession = await response.json();
       saveSession(session);
       router.replace(accountHome(session.user.accountType));

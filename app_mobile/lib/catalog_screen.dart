@@ -1,3 +1,6 @@
+// Mostra os anúncios publicados recebidos de FreelikeApi.catalog.
+// Ao tocar em um anúncio, abre ServiceDetailScreen com o ID selecionado.
+
 import 'package:flutter/material.dart';
 
 import 'freelike_api.dart';
@@ -27,6 +30,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
     _load();
   }
 
+  // Ao abrir ou atualizar a vitrine, busca os anúncios pela API e atualiza o estado da tela.
   Future<void> _load() async {
     setState(() {
       _loading = true;
@@ -48,6 +52,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
     }
   }
 
+  // Empilha a tela de detalhes no Navigator, passando a mesma API e o ID do anúncio.
   void _openService(ServiceOffer offer) {
     Navigator.of(context).push<void>(
       MaterialPageRoute(

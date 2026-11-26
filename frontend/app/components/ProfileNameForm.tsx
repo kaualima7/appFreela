@@ -1,5 +1,7 @@
 "use client";
 
+// Edita o nome da própria conta e avisa os outros componentes depois de salvar.
+
 import { useId, useState, type FormEvent } from "react";
 import { API_URL, managementError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
@@ -20,6 +22,7 @@ export default function ProfileNameForm({
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
 
+  // Envia PATCH /api/users/:id com o novo nome e pede a atualização dos dados da sessão.
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user || saving) return;

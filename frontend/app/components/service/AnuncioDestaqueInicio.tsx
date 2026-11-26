@@ -1,5 +1,7 @@
 "use client";
 
+// Consulta a vitrine e escolhe o primeiro anúncio com imagem para destacar na página inicial.
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { PublicService } from "@/app/types/service";

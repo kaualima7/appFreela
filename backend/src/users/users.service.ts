@@ -1,3 +1,6 @@
+// Consulta e altera contas no banco usando o Prisma.
+// Também protege a senha no cadastro e impede alterações em contas de outras pessoas.
+
 import {
   ConflictException,
   ForbiddenException,
@@ -13,10 +16,12 @@ import * as bcrypt from 'bcryptjs';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
+  // Busca a conta usada na conferência de login; inclui o hash para comparar a senha.
   findByEmail(email: string) {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
+  // Confirma que o usuário do token ainda existe e consulta seu tipo de conta atual.
   findById(id: number) {
     return this.prisma.user.findUnique({
       where: { id },
@@ -24,6 +29,7 @@ export class UsersService {
     });
   }
 
+  //cad 5: verifica se o email ja existe. se existir = 409
   async createUser(dto: CreateUserDto) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -33,8 +39,10 @@ export class UsersService {
       throw new ConflictException('Email já cadastrado');
     }
 
-    const passwordHash = await bcrypt.hash(dto.password, 10); // 10 é o custo aplicado pelo bcrypt, quanto maior mais difícil quebrar o hash
+    //gera o hash para nao gravar a senha original no banco
+    const passwordHash = await bcrypt.hash(dto.password, 10); 
 
+    //grava a conta pelo prisma e retorna os campos do select, sem o hash da senha
     return this.prisma.user.create({
       data: {
         name: dto.name,
@@ -49,9 +57,10 @@ export class UsersService {
         createdAt: true,
         accountType: true,
       },
-    });
+    });//->front form
   }
 
+  // Apesar do nome, retorna somente a conta autenticada, sem o hash da senha.
   async getAllUsers(userId: number) {
     return this.prisma.user.findMany({
       where: { id: userId },
@@ -68,6 +77,7 @@ export class UsersService {
     });
   }
 
+  // Confere o dono da conta e o e-mail antes de atualizar; também sincroniza o nome do perfil.
   async updateUser(id: number, dto: UpdateUserDto, userId: number) {
     if (id !== userId)
       throw new ForbiddenException('Acesso permitido somente à própria conta.');
@@ -113,6 +123,7 @@ export class UsersService {
     });
   }
 
+  // Exclui somente a própria conta; as relações do schema definem os registros afetados.
   async deleteUser(id: number, userId: number) {
     if (id !== userId)
       throw new ForbiddenException('Acesso permitido somente à própria conta.');

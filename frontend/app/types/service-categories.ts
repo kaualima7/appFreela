@@ -1,3 +1,5 @@
+// Lista as categorias usadas no formulário de anúncio e no filtro da vitrine.
+
 export const serviceCategories = [
   "Áudio e música",
   "Consultoria",

@@ -1,5 +1,7 @@
 "use client";
 
+// Lê o ID da URL e mostra o perfil público pelo componente FreelancerProfile.
+
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import FreelancerProfile from "@/app/components/FreelancerProfile";

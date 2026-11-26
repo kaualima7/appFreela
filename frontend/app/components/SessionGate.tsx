@@ -1,5 +1,8 @@
 "use client";
 
+// Controla quais páginas aparecem conforme a sessão e o tipo de conta.
+// A API também verifica as permissões, em backend/src/auth/jwt-auth.guard.ts.
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
@@ -20,6 +23,7 @@ export default function SessionGate({
   const router = useRouter();
   const { user, checking, error, retry } = useSession();
 
+  // Redireciona ao login se não houver sessão ou ao destino da conta se a área não for permitida.
   useEffect(() => {
     if (checking || error) return;
     if (user && (access === "guest" || user.accountType !== access))

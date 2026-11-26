@@ -1,5 +1,8 @@
 "use client";
 
+// Lista os anúncios do freelancer consultando /api/services/mine.
+// Permite abrir edição, confirmar exclusão e consultar os interessados.
+
 import RefreshButton from "@/app/components/RefreshButton";
 
 import { useEffect, useState } from "react";
@@ -28,6 +31,7 @@ export default function MyServices() {
     const controller = new AbortController();
     let active = true;
     const timeout = setTimeout(() => controller.abort(), 15000);
+    // Consulta os próprios anúncios e recupera o aviso deixado após criar ou editar um serviço.
     async function loadServices() {
       try {
         const response = await authenticatedFetch(`${API_URL}/services/mine`, {
@@ -81,12 +85,14 @@ export default function MyServices() {
     setRequestVersion((previousVersion) => previousVersion + 1);
   }
 
+  // Guarda o anúncio selecionado e abre a confirmação antes de pedir a exclusão.
   function confirmDelete(service: FreelancerService) {
     setNotice("");
     setDeleteError("");
     setServiceToDelete(service);
   }
 
+  // Envia DELETE /api/services/:id e recarrega a lista depois da confirmação da API.
   async function deleteService() {
     if (!serviceToDelete || deleting) return;
     setDeleting(true);

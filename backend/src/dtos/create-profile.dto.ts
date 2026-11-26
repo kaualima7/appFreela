@@ -1,3 +1,6 @@
+// Valida os dados para criar o perfil da conta autenticada.
+// O ValidationPipe de main.ts aplica essas regras e responde 400 se os dados forem inválidos.
+
 import {
   IsDateString,
   IsOptional,

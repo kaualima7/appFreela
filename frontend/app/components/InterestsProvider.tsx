@@ -1,5 +1,8 @@
 "use client";
 
+// Mantém a lista de likes do cliente disponível para as telas da Web.
+// Consulta /api/interests e envia as alterações para /api/services/:id/interest.
+
 import {
   createContext,
   useContext,
@@ -33,6 +36,7 @@ const InterestsContext = createContext<{
   ) => Promise<InterestResult>;
 } | null>(null);
 
+// Busca os likes da conta de cliente em GET /api/interests, usando o token da sessão.
 async function readInterests(signal?: AbortSignal): Promise<ClientInterest[]> {
   const response = await authenticatedFetch(`${API_URL}/interests`, { signal });
   if (!response.ok)
@@ -71,6 +75,7 @@ export default function InterestsProvider({
   const [pendingKeys, setPendingKeys] = useState<string[]>([]);
   const mutationVersion = useRef(0);
 
+  // Carrega a lista ao identificar o cliente e cancela o pedido quando a consulta deixa de ser necessária.
   useEffect(() => {
     if (clientUserId === null) return;
     const controller = new AbortController();
@@ -108,6 +113,7 @@ export default function InterestsProvider({
     };
   }, [clientUserId, version]);
 
+  //like 2: envia POST para registrar ou DELETE para retirar em /api/services/:id/interest; depois atualiza os likes na tela
   async function changeInterest(
     service: PublicService,
     interested: boolean,
@@ -182,6 +188,7 @@ export default function InterestsProvider({
       if (getToken() !== token)
         return { ok: false, error: "Sua sessão mudou. Entre novamente." };
       mutationVersion.current += 1;
+      // Atualiza a lista compartilhada depois da confirmação da API para refletir o like em todas as telas.
       setSnapshot((previous) => {
         const remaining =
           previous.clientUserId === clientUserId
@@ -246,6 +253,7 @@ export default function InterestsProvider({
   );
 }
 
+// Permite que os componentes consultem a lista de likes e usem as ações compartilhadas.
 export function useInterests() {
   const interests = useContext(InterestsContext);
   if (!interests) throw new Error("Interesses não inicializados.");

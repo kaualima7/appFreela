@@ -1,3 +1,6 @@
+// Recebe os pedidos de pagamentos em /api/payments, somente para freelancers.
+// A consulta pode usar ?projectId= para selecionar um projeto.
+
 import {
   Body,
   Controller,
@@ -21,11 +24,13 @@ import { AccountTypes } from '../auth/account-types.decorator';
 export class PaymentsController {
   constructor(private readonly service: PaymentsService) {}
 
+  // POST /api/payments: recebe o registro de pagamento para um projeto.
   @Post()
   create(@Body() dto: CreatePaymentDto, @Req() request: AuthenticatedRequest) {
     return this.service.create(dto, request.user.sub);
   }
 
+  // GET /api/payments: consulta os pagamentos do freelancer autenticado.
   @Get()
   findAll(
     @Query('projectId', new ParseIntPipe({ optional: true }))
@@ -35,6 +40,7 @@ export class PaymentsController {
     return this.service.findAll(projectId, request.user.sub);
   }
 
+  // GET /api/payments/:id: consulta um registro usando o ID da URL.
   @Get(':id')
   findOne(
     @Param('id', ParseIntPipe) id: number,
@@ -43,6 +49,7 @@ export class PaymentsController {
     return this.service.findOne(id, request.user.sub);
   }
 
+  // PATCH /api/payments/:id: recebe os campos alterados e chama o serviço.
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -52,6 +59,7 @@ export class PaymentsController {
     return this.service.update(id, dto, request.user.sub);
   }
 
+  // DELETE /api/payments/:id: pede a exclusão; o serviço confere acesso e regras.
   @Delete(':id')
   remove(
     @Param('id', ParseIntPipe) id: number,

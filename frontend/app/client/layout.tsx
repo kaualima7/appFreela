@@ -1,3 +1,5 @@
+// Usa SessionGate para permitir a área /client somente a contas de cliente.
+
 import type { ReactNode } from "react";
 import SessionGate from "@/app/components/SessionGate";
 

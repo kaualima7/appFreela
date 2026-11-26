@@ -1,5 +1,7 @@
 "use client";
 
+// Escolhe a foto de destaque da página inicial e alterna a opção a cada novo carregamento.
+
 import Image from "next/image";
 import { useEffect, useState } from "react";
 

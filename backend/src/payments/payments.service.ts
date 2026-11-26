@@ -1,3 +1,6 @@
+// Registra parcelas e recebimentos dos projetos do freelancer.
+// Confere se a situação do pagamento combina com a data de recebimento.
+
 import {
   BadRequestException,
   Injectable,
@@ -13,10 +16,12 @@ import { UpdatePaymentDto } from '../dtos/update-payment.dto';
 export class PaymentsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  // Devolve o valor do pagamento como texto com duas casas decimais.
   private formatResponse(payment: PaymentModel) {
     return { ...payment, amount: payment.amount.toFixed(2) };
   }
 
+  // Exige data de recebimento quando está pago e impede essa data nas demais situações.
   private validatePayment(status: string, paidAt?: Date | null) {
     if (status === 'PAID' && !paidAt) {
       throw new BadRequestException(
@@ -30,6 +35,7 @@ export class PaymentsService {
     }
   }
 
+  // Confere se o projeto pertence ao freelancer e grava o pagamento após validar a situação.
   async create(dto: CreatePaymentDto, userId: number) {
     const project = await this.prisma.project.findFirst({
       where: { id: dto.projectId, client: { userId } },
@@ -51,6 +57,7 @@ export class PaymentsService {
     return this.formatResponse(payment);
   }
 
+  // Lista pagamentos dos projetos do freelancer, com filtro opcional por projectId.
   async findAll(projectId: number | undefined, userId: number) {
     if (projectId !== undefined) {
       if (projectId <= 0 || projectId > 2147483647)
@@ -67,6 +74,7 @@ export class PaymentsService {
     return payments.map((payment) => this.formatResponse(payment));
   }
 
+  // Confere o acesso seguindo as relações pagamento, projeto e contato do freelancer.
   async findOne(id: number, userId: number) {
     if (id <= 0 || id > 2147483647)
       throw new BadRequestException('ID de pagamento inválido.');
@@ -77,6 +85,7 @@ export class PaymentsService {
     return this.formatResponse(payment);
   }
 
+  // Combina os dados atuais com as alterações para validar a situação antes de salvar.
   async update(id: number, dto: UpdatePaymentDto, userId: number) {
     const current = await this.findOne(id, userId);
     const status = dto.status ?? current.status;
@@ -101,6 +110,7 @@ export class PaymentsService {
     return this.formatResponse(payment);
   }
 
+  // Confere o acesso ao registro antes de excluir o pagamento.
   async remove(id: number, userId: number) {
     await this.findOne(id, userId);
     await this.prisma.payment.delete({ where: { id } });

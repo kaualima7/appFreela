@@ -1,3 +1,6 @@
+// Recebe os pedidos de anúncios e likes em /api/services.
+// A vitrine é pública; criar anúncios exige freelancer e dar like exige cliente.
+
 import {
   Body,
   Controller,
@@ -35,12 +38,14 @@ export class ServicesController {
   }
 
   @AccountTypes('FREELANCER')
+  // GET /api/services/mine: anúncios da própria conta, incluindo os não publicados.
   @Get('mine')
   findMine(@Req() request: AuthenticatedRequest) {
     return this.service.findMine(request.user.sub);
   }
 
   @AccountTypes('FREELANCER')
+  // GET /api/services/mine/:id: busca o próprio anúncio para preencher a edição.
   @Get('mine/:id')
   findOwn(
     @Param('id', ParseIntPipe) serviceId: number,
@@ -65,6 +70,7 @@ export class ServicesController {
 
   @AccountTypes('FREELANCER')
   @Post()
+  //capa 3: recebe arquivo e dados; create em services.service.ts recebe também o ID do freelancer autenticado
   @UseInterceptors(ServiceCoverUpload, ServiceFormInterceptor)
   create(
     @Body() dto: CreateServiceDto,
@@ -96,6 +102,7 @@ export class ServicesController {
   }
 
   @AccountTypes('CLIENT')
+  //like 3: recebe o ID do anúncio pela URL e o ID do cliente pelo token -> confirmInterest em services.service.ts
   @Post(':id/interest')
   confirmInterest(
     @Param('id', ParseIntPipe) serviceId: number,
@@ -114,6 +121,7 @@ export class ServicesController {
   }
 
   @AccountTypes('FREELANCER')
+  //interessados: consulta de freelancer -> interestedClients em services.service.ts verifica se o anúncio pertence a ele
   @Get(':id/interests')
   interestedClients(
     @Param('id', ParseIntPipe) serviceId: number,

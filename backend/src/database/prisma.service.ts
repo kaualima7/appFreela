@@ -1,3 +1,5 @@
+// Faz a ligação entre os serviços da API e o banco SQLite usando o Prisma.
+
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient } from '../generated/prisma/client';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';

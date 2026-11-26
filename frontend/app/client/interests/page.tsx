@@ -1,5 +1,7 @@
 "use client";
 
+// Mostra os likes fornecidos por InterestsProvider e permite retirá-los com BotaoInteresse.
+
 import RefreshButton from "@/app/components/RefreshButton";
 
 import Link from "next/link";

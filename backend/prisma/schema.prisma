@@ -1,3 +1,6 @@
+// Define as tabelas e as relações do banco SQLite usado pelo Freelike.
+// Os serviços em backend/src usam essas estruturas por meio do Prisma.
+
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -18,6 +21,7 @@ enum AccountType {
   CLIENT
 }
 
+// Conta usada para entrar no sistema; accountType diferencia cliente e freelancer.
 model User {
   id             Int               @id @default(autoincrement())
   name           String
@@ -33,6 +37,7 @@ model User {
   interests      ServiceInterest[]
 }
 
+// Dados complementares de uma conta; userId é único, permitindo um perfil por usuário.
 model Profile {
   id        Int       @id @default(autoincrement())
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -44,6 +49,7 @@ model Profile {
   updatedAt DateTime  @updatedAt
 }
 
+// Contato da agenda do freelancer: userId é o dono e clientUserId é a conta de cliente vinculada.
 model Client {
   id           Int       @id @default(autoincrement())
   name         String
@@ -62,6 +68,7 @@ model Client {
   @@index([clientUserId])
 }
 
+// Anúncio de serviço do freelancer; published controla sua exibição na vitrine.
 model Service {
   id            Int               @id @default(autoincrement())
   freelancer    User              @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
@@ -80,6 +87,7 @@ model Service {
   @@index([published, category])
 }
 
+// Like de uma conta de cliente em um anúncio; a combinação dos dois IDs não pode se repetir.
 model ServiceInterest {
   id           Int      @id @default(autoincrement())
   service      Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
@@ -92,6 +100,7 @@ model ServiceInterest {
   @@index([clientUserId])
 }
 
+// Trabalho ligado a um contato; value é o valor combinado e payments reúne seus registros de pagamento.
 model Project {
   id          Int       @id @default(autoincrement())
   title       String
@@ -107,6 +116,7 @@ model Project {
   payments    Payment[]
 }
 
+// Parcela ou recebimento ligado a um projeto; status e paidAt indicam se já foi recebido.
 model Payment {
   id            Int       @id @default(autoincrement())
   amount        Decimal

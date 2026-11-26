@@ -1,5 +1,7 @@
 "use client";
 
+// Mostra os dados da própria conta de cliente e permite editar o nome.
+
 import { useEffect, useState } from "react";
 import { API_URL } from "@/app/api";
 import ProfileAvatar from "@/app/components/ProfileAvatar";
@@ -34,6 +36,7 @@ function ClientProfile({
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
+    // Consulta o próprio perfil; 404 indica que a conta ainda não possui esse registro complementar.
     async function loadProfile() {
       try {
         const response = await authenticatedFetch(`${API_URL}/profiles/me`, {

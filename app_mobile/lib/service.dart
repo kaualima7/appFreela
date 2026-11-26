@@ -1,3 +1,6 @@
+// Transforma o JSON de um anúncio em ServiceOffer para uso nas telas do app.
+// Também formata o preço inicial em reais.
+
 class ServiceOffer {
   const ServiceOffer({
     required this.id,
@@ -8,6 +11,7 @@ class ServiceOffer {
     required this.imageUrl,
   });
 
+  // Lê o JSON recebido da API e escolhe o nome completo do perfil quando ele está preenchido.
   factory ServiceOffer.fromJson(Map<String, dynamic> json) {
     final freelancer = json['freelancer'] as Map<String, dynamic>;
     final profile = freelancer['profile'] as Map<String, dynamic>?;

@@ -1,3 +1,5 @@
+// Registra os controllers e serviços de contatos para uso pelo NestJS.
+
 import { Module } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { ClientsController } from './clients.controller';

@@ -1,5 +1,7 @@
 "use client";
 
+// Mostra a capa do anúncio ou uma imagem substituta quando a capa está ausente ou falha.
+
 import Image from "next/image";
 import { useState } from "react";
 

@@ -1,5 +1,8 @@
 "use client";
 
+// Formulário de criação e edição dos anúncios do freelancer.
+// Envia os dados e, quando escolhida, a capa preparada por EditorCapaAnuncio.
+
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { API_URL, serviceError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
@@ -48,6 +51,7 @@ export default function FormularioAnuncio({
     if (cover) return () => URL.revokeObjectURL(cover);
   }, [cover]);
 
+  //capa 1: confere formato e tamanho e cria a prévia local; ainda não envia para a API
   function chooseCover(event: ChangeEvent<HTMLInputElement>) {
     const file = event.currentTarget.files?.[0];
     event.currentTarget.value = "";
@@ -70,6 +74,7 @@ export default function FormularioAnuncio({
     setRemoveCover(false);
   }
 
+  // Confere o formulário e escolhe POST para criar ou PATCH para editar o anúncio.
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving) return;
@@ -108,6 +113,7 @@ export default function FormularioAnuncio({
         published,
         ...(removeCover ? { imageUrl: null } : {}),
       };
+      //capa 2: junta os dados em service e a imagem em cover; prepareServiceCover está em EditorCapaAnuncio.tsx
       const form = cover ? new FormData() : null;
       if (form && cover) {
         form.append("service", JSON.stringify(serviceFields));
@@ -120,6 +126,7 @@ export default function FormularioAnuncio({
         }
         form.append("cover", image, image.type === "image/webp" ? "capa.webp" : "capa.png");
       }
+      //envia com token para services.controller.ts: POST cria, PATCH edita; com capa usa FormData
       const response = await authenticatedFetch(
         `${API_URL}/services${service ? `/${service.id}` : ""}`,
         {

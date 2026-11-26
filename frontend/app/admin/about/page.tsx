@@ -1,3 +1,5 @@
+// Mostra o texto de apresentação do projeto dentro da área do freelancer.
+
 export default function AboutPage() {
   return (
     <section className="account-home">

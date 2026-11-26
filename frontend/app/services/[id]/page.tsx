@@ -1,4 +1,7 @@
 "use client";
+// Lê o ID da URL, consulta o anúncio público e mostra seus detalhes.
+// BotaoInteresse cuida do like; o link do profissional abre seu perfil.
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -24,6 +27,7 @@ function ServiceDetailsContent({ id }: { id: string }) {
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
+    // Consulta GET /api/services/:id, que devolve apenas anúncios publicados.
     async function load() {
       try {
         if (!/^[1-9]\d*$/.test(id) || Number(id) > 2147483647)

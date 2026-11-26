@@ -1,3 +1,6 @@
+// Consulta projetos e pagamentos pelo vínculo clientUserId do contato.
+// Esse vínculo determina quais trabalhos a conta do cliente pode acompanhar.
+
 import {
   BadRequestException,
   Injectable,
@@ -39,6 +42,7 @@ export class ClientPortalService {
       throw new BadRequestException('ID inválido.');
   }
 
+  // Prepara os dados exibidos ao cliente e inclui o freelancer responsável em projectOwner.
   private formatProject(project: ClientProject) {
     return {
       id: project.id,
@@ -52,6 +56,7 @@ export class ClientPortalService {
     };
   }
 
+  // Lista trabalhos de contatos cujo clientUserId aponta para a conta autenticada.
   async projects(clientUserId: number) {
     const projects = await this.prisma.project.findMany({
       where: { client: { clientUserId } },
@@ -61,6 +66,7 @@ export class ClientPortalService {
     return projects.map((project) => this.formatProject(project));
   }
 
+  // Consulta um projeto somente quando seu contato está vinculado à conta do cliente.
   async project(projectId: number, clientUserId: number) {
     this.validateId(projectId);
     const project = await this.prisma.project.findFirst({
@@ -71,6 +77,7 @@ export class ClientPortalService {
     return this.formatProject(project);
   }
 
+  // Lista pagamentos dos trabalhos vinculados ao cliente; projectId pode limitar a consulta.
   async payments(projectId: number | undefined, clientUserId: number) {
     if (projectId !== undefined) await this.project(projectId, clientUserId);
     const payments = await this.prisma.payment.findMany({
@@ -84,6 +91,7 @@ export class ClientPortalService {
     }));
   }
 
+  // Consulta um pagamento somente se ele fizer parte de um trabalho vinculado ao cliente.
   async payment(paymentId: number, clientUserId: number) {
     this.validateId(paymentId);
     const payment = await this.prisma.payment.findFirst({

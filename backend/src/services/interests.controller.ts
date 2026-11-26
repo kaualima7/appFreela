@@ -1,3 +1,5 @@
+// Recebe GET /api/interests e lista os likes da conta de cliente autenticada.
+
 import { Controller, Get, Req } from '@nestjs/common';
 import { AccountTypes } from '../auth/account-types.decorator';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';

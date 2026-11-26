@@ -1,3 +1,6 @@
+// Define o endereço da API e transforma respostas de erro em mensagens para as telas.
+// API_URL já inclui /api; as chamadas acrescentam o caminho da funcionalidade.
+
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
 

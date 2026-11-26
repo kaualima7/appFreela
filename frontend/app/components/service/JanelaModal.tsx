@@ -1,5 +1,8 @@
 "use client";
 
+// Janela reutilizada pelos formulários e confirmações.
+// Controla abertura, fechamento e foco do teclado.
+
 import { useEffect, useRef, type ReactNode } from "react";
 
 export default function JanelaModal({

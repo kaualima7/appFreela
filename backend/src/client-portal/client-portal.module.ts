@@ -1,3 +1,5 @@
+// Registra os controllers e serviços de consultas do cliente para uso pelo NestJS.
+
 import { Module } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { ClientPortalController } from './client-portal.controller';

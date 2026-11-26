@@ -1,5 +1,7 @@
 "use client";
 
+// Abre o perfil do freelancer autenticado com as opções de edição habilitadas.
+
 import FreelancerProfile from "@/app/components/FreelancerProfile";
 import { useSession } from "@/app/components/SessionProvider";
 
