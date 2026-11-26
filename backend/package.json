@@ -13,6 +13,7 @@
   "scripts": {
     "prisma:generate": "prisma generate",
     "db:migrate": "prisma migrate deploy",
+    "seed:demo": "npm run build --silent && node --env-file-if-exists=.env prisma/demo/seed.cjs",
     "test:integration": "npm run build && node test/migrations.integration.cjs && node test/auth.integration.cjs && node test/projects.integration.cjs && node test/payments.integration.cjs && node test/marketplace.integration.cjs",
     "build": "nest build",
     "deploy": "nest deploy",
