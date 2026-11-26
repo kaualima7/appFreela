@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import HomeHeroPhoto from "./components/HomeHeroPhoto";
 import HomeServiceHighlight from "./components/service/HomeServiceHighlight";
 
 export const metadata: Metadata = {
@@ -49,15 +49,7 @@ export default function Home() {
         </div>
         <div className="col-lg-7">
           <div className="home-photo">
-            <Image
-              src="/freelike-home.webp"
-              width={1448}
-              height={1086}
-              sizes="(min-width: 1400px) 720px, (min-width: 992px) 55vw, 100vw"
-              alt="Homem usando o celular em um espaço de trabalho compartilhado"
-              loading="eager"
-              fetchPriority="high"
-            />
+            <HomeHeroPhoto />
             <HomeServiceHighlight />
           </div>
         </div>
