@@ -1,7 +1,9 @@
-import { IsEmail, IsOptional, IsString, Length } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsEmail, IsOptional, IsString, Length, ValidateIf } from 'class-validator';
 
 export class UpdateUserDto {
-  @IsOptional()
+  @ValidateIf((_, value) => value !== undefined)
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsString()
   @Length(3, 100)
   name?: string;

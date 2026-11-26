@@ -47,6 +47,14 @@ export class ProfilesService {
     return profile;
   }
 
+  async updateSpecialties(freelancerId: number, specialties: string[]) {
+    return this.prisma.user.update({
+      where: { id: freelancerId, accountType: 'FREELANCER' },
+      data: { specialties },
+      select: { specialties: true },
+    });
+  }
+
   async findOne(id: number, userId: number) {
     const profile = await this.prisma.profile.findFirst({
       where: { id, userId },

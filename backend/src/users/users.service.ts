@@ -89,19 +89,27 @@ export class UsersService {
       }
     }
 
-    return this.prisma.user.update({
-      where: { id },
-      data: {
-        name: dto.name,
-        email: dto.email,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        createdAt: true,
-        accountType: true,
-      },
+    const name = dto.name?.trim();
+    return this.prisma.$transaction(async (prisma) => {
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: { name, email: dto.email },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          createdAt: true,
+          accountType: true,
+        },
+      });
+      if (name !== undefined) {
+        // O nome completo, quando cadastrado, aparece no perfil e nos anúncios.
+        await prisma.profile.updateMany({
+          where: { userId: id },
+          data: { fullName: name },
+        });
+      }
+      return updatedUser;
     });
   }
 

@@ -29,6 +29,7 @@ export type FreelancerService = {
 };
 
 export type PublicFreelancer = PublicService["freelancer"] & {
+  specialties: string[];
   services: Omit<PublicService, "freelancer">[];
 };
 

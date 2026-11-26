@@ -10,7 +10,7 @@ export default function MyFreelancerProfile() {
   return (
     <>
       <p className="section-label mb-0">Meu perfil</p>
-      <FreelancerProfile key={user.id} id={String(user.id)} />
+      <FreelancerProfile key={user.id} id={String(user.id)} editable />
     </>
   );
 }

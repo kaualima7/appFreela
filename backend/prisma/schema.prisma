@@ -26,6 +26,7 @@ model User {
   createdAt      DateTime          @default(now())
   profile        Profile?
   accountType    AccountType       @default(FREELANCER)
+  specialties    Json              @default("[]")
   clients        Client[]          @relation("FreelancerContacts")
   linkedContacts Client[]          @relation("ClientAccount")
   services       Service[]

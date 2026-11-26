@@ -45,6 +45,7 @@ export class ServicesService {
       where: { id: freelancerId, accountType: 'FREELANCER' },
       select: {
         ...publicFreelancerSelect,
+        specialties: true,
         services: {
           where: { published: true },
           orderBy: { createdAt: 'desc' },

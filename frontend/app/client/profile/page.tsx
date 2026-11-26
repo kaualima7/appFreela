@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "@/app/api";
 import ProfileAvatar from "@/app/components/ProfileAvatar";
+import ProfileNameForm from "@/app/components/ProfileNameForm";
 import { useSession } from "@/app/components/SessionProvider";
 import { authenticatedFetch } from "@/app/login/auth_service";
 
@@ -24,6 +25,7 @@ function ClientProfile({
   email: string;
 }) {
   const [profile, setProfile] = useState<OwnProfile | null>(null);
+  const [savedName, setSavedName] = useState("");
   const [profileStatus, setProfileStatus] = useState<
     "loading" | "ready" | "error"
   >("loading");
@@ -61,7 +63,7 @@ function ClientProfile({
     };
   }, [profileRevision]);
 
-  const name = profile?.fullName?.trim() || accountName;
+  const name = savedName || profile?.fullName?.trim() || accountName;
   return (
     <section className="account-home card card-body p-4 p-md-5">
       <h1 className="h2 mb-4">Meu perfil</h1>
@@ -87,6 +89,9 @@ function ClientProfile({
             Tentar carregar perfil novamente
           </button>
         </div>
+      )}
+      {profileStatus !== "loading" && (
+        <ProfileNameForm name={name} onSaved={setSavedName} />
       )}
     </section>
   );

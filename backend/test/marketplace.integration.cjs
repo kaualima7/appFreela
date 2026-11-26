@@ -98,6 +98,73 @@ async function main() {
         400,
       );
     }
+
+    const publicProfile = `/freelancers/${freelancerA.user.id}`;
+    const specialtiesRoute = '/profiles/me/specialties';
+    const optionsRoute = '/profiles/me/specialty-options';
+    const specialties = ['Design gráfico', 'Redação'];
+    assert.deepEqual(
+      (await request('GET', publicProfile, undefined, 200)).specialties,
+      [],
+    );
+    const options = await request(
+      'GET',
+      optionsRoute,
+      undefined,
+      200,
+      freelancerA,
+    );
+    assert.ok(specialties.every((specialty) => options.includes(specialty)));
+    await request('GET', optionsRoute, undefined, 403, clientA);
+    await request('PATCH', specialtiesRoute, { specialties }, 401);
+    await request('PATCH', specialtiesRoute, { specialties }, 403, clientA);
+    for (const invalid of [
+      null,
+      'Redação',
+      ['Outra área'],
+      ['Redação', 'Redação'],
+    ]) {
+      await request(
+        'PATCH',
+        specialtiesRoute,
+        { specialties: invalid },
+        400,
+        freelancerA,
+      );
+    }
+    await request(
+      'PATCH',
+      specialtiesRoute,
+      { specialties, freelancerId: freelancerB.user.id },
+      200,
+      freelancerA,
+    );
+    const updatedProfile = await request('GET', publicProfile, undefined, 200);
+    assert.deepEqual(updatedProfile.specialties, specialties);
+    assert.deepEqual(updatedProfile.services, []);
+    assert.equal(updatedProfile.email, undefined);
+    assert.deepEqual(
+      (
+        await request(
+          'GET',
+          `/freelancers/${freelancerB.user.id}`,
+          undefined,
+          200,
+        )
+      ).specialties,
+      [],
+    );
+    await request(
+      'PATCH',
+      specialtiesRoute,
+      { specialties: [] },
+      200,
+      freelancerA,
+    );
+    assert.deepEqual(
+      (await request('GET', publicProfile, undefined, 200)).specialties,
+      [],
+    );
     const validService = {
       title: 'Site institucional',
       description: 'Desenvolvimento de site para empresas',

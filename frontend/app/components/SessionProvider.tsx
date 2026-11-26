@@ -20,12 +20,13 @@ const SessionContext = createContext<{
   checking: boolean;
   error: string;
   retry: () => void;
+  refreshUser: () => void;
 } | null>(null);
 
 export default function SessionProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [revision, setRevision] = useState(0);
-  const [focusRevision, setFocusRevision] = useState(0);
+  const [backgroundRevision, setBackgroundRevision] = useState(0);
   const [session, setSession] = useState<{
     path: string | null;
     revision: number;
@@ -65,7 +66,7 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [pathname, revision, focusRevision]);
+  }, [pathname, revision, backgroundRevision]);
 
   useEffect(() => {
     function refresh() {
@@ -73,7 +74,7 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
     }
     function checkOnFocus() {
       // Voltar do seletor de arquivos não deve desmontar uma tela já autorizada.
-      setFocusRevision((previousRevision) => previousRevision + 1);
+      setBackgroundRevision((previousRevision) => previousRevision + 1);
     }
     function restore(event: PageTransitionEvent) {
       if (event.persisted) refresh();
@@ -102,6 +103,8 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
         checking,
         error: checking ? "" : session.error,
         retry: () => setRevision((previousRevision) => previousRevision + 1),
+        refreshUser: () =>
+          setBackgroundRevision((previousRevision) => previousRevision + 1),
       }}
     >
       {children}

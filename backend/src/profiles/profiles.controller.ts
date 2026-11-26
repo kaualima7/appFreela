@@ -9,6 +9,9 @@ import {
   Req,
 } from '@nestjs/common';
 import { CreateProfileDto } from '../dtos/create-profile.dto';
+import { UpdateSpecialtiesDto } from '../dtos/update-specialties.dto';
+import { AccountTypes } from '../auth/account-types.decorator';
+import { freelancerSpecialties } from './freelancer-specialties';
 import { UpdateProfileDto } from '../dtos/update-profile.dto';
 import { ProfilesService } from './profiles.service';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';
@@ -25,6 +28,21 @@ export class ProfilesController {
   @Get('me')
   ownProfile(@Req() request: AuthenticatedRequest) {
     return this.service.findOwn(request.user.sub);
+  }
+
+  @AccountTypes('FREELANCER')
+  @Get('me/specialty-options')
+  specialtyOptions() {
+    return freelancerSpecialties;
+  }
+
+  @AccountTypes('FREELANCER')
+  @Patch('me/specialties')
+  updateSpecialties(
+    @Body() dto: UpdateSpecialtiesDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.service.updateSpecialties(request.user.sub, dto.specialties);
   }
 
   @Get(':id')

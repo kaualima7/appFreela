@@ -166,7 +166,11 @@ async function main() {
     const profile = await request(
       'POST',
       '/profiles',
-      { fullName: 'Perfil A', userId: b.user.id },
+      {
+        fullName: 'Perfil A',
+        avatarUrl: 'https://example.com/avatar.png',
+        userId: b.user.id,
+      },
       201,
       a.access_token,
     );
@@ -206,6 +210,62 @@ async function main() {
       200,
       a.access_token,
     );
+
+    const renamedFreelancer = await request(
+      'PATCH',
+      `/users/${a.user.id}`,
+      { name: '  Novo Nome Freelancer  ' },
+      200,
+      a.access_token,
+    );
+    assert.equal(renamedFreelancer.name, 'Novo Nome Freelancer');
+    const publicFreelancer = await request(
+      'GET',
+      `/freelancers/${a.user.id}`,
+      undefined,
+      200,
+    );
+    assert.equal(publicFreelancer.profile.fullName, renamedFreelancer.name);
+    assert.equal(publicFreelancer.profile.avatarUrl, profile.avatarUrl);
+
+    const client = await request(
+      'POST',
+      '/auth/register',
+      {
+        name: 'Conta Cliente',
+        email: `client-${suffix}@example.com`,
+        password,
+        accountType: 'CLIENT',
+      },
+      201,
+    );
+    for (const invalidName of ['    ', null]) {
+      await request(
+        'PATCH',
+        `/users/${client.user.id}`,
+        { name: invalidName },
+        400,
+        client.access_token,
+      );
+    }
+    const renamedClient = await request(
+      'PATCH',
+      `/users/${client.user.id}`,
+      { name: 'Nome Novo Cliente' },
+      200,
+      client.access_token,
+    );
+    assert.equal(renamedClient.name, 'Nome Novo Cliente');
+    assert.equal(renamedClient.email, client.user.email);
+    const clientSession = await request(
+      'GET',
+      '/users',
+      undefined,
+      200,
+      client.access_token,
+    );
+    assert.equal(clientSession[0].name, renamedClient.name);
+    await request('GET', '/profiles/me', undefined, 404, client.access_token);
 
     const clientA = await request(
       'POST',

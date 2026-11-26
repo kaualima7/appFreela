@@ -1,0 +1,1 @@
+ALTER TABLE "User" ADD COLUMN "specialties" JSONB NOT NULL DEFAULT '[]';
