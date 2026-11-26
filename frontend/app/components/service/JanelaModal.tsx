@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 
-export default function ServiceDialog({
+export default function JanelaModal({
   id,
   title,
   busy,

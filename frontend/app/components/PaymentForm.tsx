@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { API_URL, managementError } from "../api";
 import { authenticatedFetch } from "../login/auth_service";
 import { paymentStatuses, type Payment } from "../types/payment";
-import ServiceDialog from "./service/ServiceDialog";
+import JanelaModal from "./service/JanelaModal";
 
 export type PaymentFormAction =
   | { type: "receipt" | "installment" }
@@ -255,14 +255,14 @@ export default function PaymentForm({
   );
 
   return editing ? (
-    <ServiceDialog
+    <JanelaModal
       id="payment-form"
       title={title}
       busy={busy}
       onClose={onClose}
     >
       {form}
-    </ServiceDialog>
+    </JanelaModal>
   ) : (
     <section
       className={marking ? "border-top mt-3 pt-3" : "card card-body mb-4"}

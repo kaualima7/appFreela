@@ -7,9 +7,9 @@ import { useState } from "react";
 import type { PublicService } from "@/app/types/service";
 import { useSession } from "../SessionProvider";
 import { useInterests } from "../InterestsProvider";
-import ServiceDialog from "./ServiceDialog";
+import JanelaModal from "./JanelaModal";
 
-export default function LikeButton({
+export default function BotaoInteresse({
   service,
   onlyWithdraw = false,
 }: {
@@ -78,7 +78,7 @@ export default function LikeButton({
         </div>
       )}
       {dialog && (
-        <ServiceDialog
+        <JanelaModal
           id={`like-${service.id}`}
           title={requiresLogin ? "Entre para dar like" : "Confirmar like"}
           busy={pending}
@@ -138,7 +138,7 @@ export default function LikeButton({
               </div>
             </>
           )}
-        </ServiceDialog>
+        </JanelaModal>
       )}
     </div>
   );

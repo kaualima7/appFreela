@@ -5,7 +5,7 @@ import { API_URL } from "@/app/api";
 import FreelancerAreasForm from "./FreelancerAreasForm";
 import ProfileAvatar from "@/app/components/ProfileAvatar";
 import ProfileNameForm from "@/app/components/ProfileNameForm";
-import ServiceCard from "@/app/components/service/ServiceCard";
+import CartaoAnuncio from "@/app/components/service/CartaoAnuncio";
 import type { PublicFreelancer } from "@/app/types/service";
 
 export default function FreelancerProfile({
@@ -175,7 +175,7 @@ export default function FreelancerProfile({
               <div className="row g-4">
                 {profile.services.map((service) => (
                   <div key={service.id} className="col-12 col-md-6 col-lg-4">
-                    <ServiceCard
+                    <CartaoAnuncio
                       service={{
                         ...service,
                         freelancer: {

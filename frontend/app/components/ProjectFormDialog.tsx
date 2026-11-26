@@ -7,7 +7,7 @@ import {
   type Project,
   type ClientContact,
 } from "../types/management";
-import ServiceDialog from "./service/ServiceDialog";
+import JanelaModal from "./service/JanelaModal";
 export default function ProjectFormDialog({
   project,
   clients,
@@ -93,7 +93,7 @@ export default function ProjectFormDialog({
     }
   }
   return (
-    <ServiceDialog
+    <JanelaModal
       id="project-form"
       title={project ? "Editar projeto" : "Novo projeto"}
       busy={busy}
@@ -228,6 +228,6 @@ export default function ProjectFormDialog({
           </p>
         )}
       </form>
-    </ServiceDialog>
+    </JanelaModal>
   );
 }

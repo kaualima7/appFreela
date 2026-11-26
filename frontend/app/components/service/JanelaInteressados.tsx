@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { API_URL, interestError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
 import type { FreelancerService, InterestedClient } from "@/app/types/service";
-import ServiceDialog from "./ServiceDialog";
-import ClientFormDialog from "../ClientFormDialog";
+import JanelaModal from "./JanelaModal";
+import FormularioContato from "../FormularioContato";
 import type { ClientAccount } from "@/app/types/management";
 
 const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
@@ -14,7 +14,7 @@ const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
   timeZone: "America/Sao_Paulo",
 });
 
-export default function InterestedClientsDialog({
+export default function JanelaInteressados({
   service,
   onClose,
 }: {
@@ -79,7 +79,7 @@ export default function InterestedClientsDialog({
 
   if (clientAccount)
     return (
-      <ClientFormDialog
+      <FormularioContato
         account={clientAccount}
         onClose={() => setClientAccount(null)}
         onSaved={(contact) => {
@@ -89,7 +89,7 @@ export default function InterestedClientsDialog({
       />
     );
   return (
-    <ServiceDialog
+    <JanelaModal
       id="interested-clients"
       title="Quem deu like no serviço"
       busy={false}
@@ -168,6 +168,6 @@ export default function InterestedClientsDialog({
           Fechar
         </button>
       </div>
-    </ServiceDialog>
+    </JanelaModal>
   );
 }

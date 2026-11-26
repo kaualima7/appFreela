@@ -6,10 +6,10 @@ import { useEffect, useState } from "react";
 import { API_URL, serviceError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
 import type { FreelancerService } from "@/app/types/service";
-import ManagedServiceCard from "@/app/components/service/ManagedServiceCard";
+import CartaoMeuAnuncio from "@/app/components/service/CartaoMeuAnuncio";
 import Link from "next/link";
-import ServiceDialog from "@/app/components/service/ServiceDialog";
-import InterestedClientsDialog from "@/app/components/service/InterestedClientsDialog";
+import JanelaModal from "@/app/components/service/JanelaModal";
+import JanelaInteressados from "@/app/components/service/JanelaInteressados";
 
 export default function MyServices() {
   const [services, setServices] = useState<FreelancerService[]>([]);
@@ -181,7 +181,7 @@ export default function MyServices() {
           <div className="row g-4">
             {services.map((service) => (
               <div key={service.id} className="col-12 col-md-6 col-lg-4">
-                <ManagedServiceCard
+                <CartaoMeuAnuncio
                   service={service}
                   onDelete={confirmDelete}
                   onViewInterests={setInterestedService}
@@ -192,13 +192,13 @@ export default function MyServices() {
         )}
       </div>
       {interestedService && (
-        <InterestedClientsDialog
+        <JanelaInteressados
           service={interestedService}
           onClose={() => setInterestedService(null)}
         />
       )}
       {serviceToDelete && (
-        <ServiceDialog
+        <JanelaModal
           id="delete-service"
           title="Excluir serviço"
           busy={deleting}
@@ -235,7 +235,7 @@ export default function MyServices() {
               {deleting ? "Excluindo..." : "Excluir serviço"}
             </button>
           </div>
-        </ServiceDialog>
+        </JanelaModal>
       )}
     </section>
   );

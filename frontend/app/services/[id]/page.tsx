@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { API_URL } from "@/app/api";
 import ProfileAvatar from "@/app/components/ProfileAvatar";
-import ServiceImage from "@/app/components/service/ServiceImage";
-import LikeButton from "@/app/components/service/LikeButton";
+import ImagemAnuncio from "@/app/components/service/ImagemAnuncio";
+import BotaoInteresse from "@/app/components/service/BotaoInteresse";
 import { useInterests } from "@/app/components/InterestsProvider";
 import { useSession } from "@/app/components/SessionProvider";
 import type { PublicService } from "@/app/types/service";
@@ -98,7 +98,7 @@ function ServiceDetailsContent({ id }: { id: string }) {
             <div className="row g-4 mt-2">
               <div className="col-12 col-lg-8">
                 <article className="card overflow-hidden service-details-main">
-                  <ServiceImage
+                  <ImagemAnuncio
                     title={service.title}
                     imageUrl={service.imageUrl}
                   />
@@ -129,7 +129,7 @@ function ServiceDetailsContent({ id }: { id: string }) {
                       </Link>
                     </div>
                   </div>
-                  <LikeButton service={service} />
+                  <BotaoInteresse service={service} />
                   {user?.accountType === "CLIENT" && interestsError && (
                     <div className="alert alert-warning mt-3" role="alert">
                       <p>{interestsError}</p>

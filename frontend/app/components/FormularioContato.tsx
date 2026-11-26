@@ -3,9 +3,9 @@ import { useRef, useState, type FormEvent } from "react";
 import { API_URL, managementError } from "../api";
 import { authenticatedFetch } from "../login/auth_service";
 import type { ClientAccount, ClientContact } from "../types/management";
-import ServiceDialog from "./service/ServiceDialog";
+import JanelaModal from "./service/JanelaModal";
 
-export default function ClientFormDialog({
+export default function FormularioContato({
   client,
   account,
   onClose,
@@ -85,7 +85,7 @@ export default function ClientFormDialog({
     }
   }
   return (
-    <ServiceDialog
+    <JanelaModal
       id="client-form"
       title={client ? "Editar contato" : "Adicionar contato"}
       busy={busy}
@@ -230,6 +230,6 @@ export default function ClientFormDialog({
           </div>
         )}
       </form>
-    </ServiceDialog>
+    </JanelaModal>
   );
 }

@@ -4,7 +4,7 @@ import RefreshButton from "@/app/components/RefreshButton";
 
 import { useEffect, useState } from "react";
 import { loadPublicServices } from "@/app/components/service/public-services";
-import ServiceCard from "@/app/components/service/ServiceCard";
+import CartaoAnuncio from "@/app/components/service/CartaoAnuncio";
 import type { PublicService } from "@/app/types/service";
 import { serviceCategories } from "@/app/types/service-categories";
 
@@ -211,7 +211,7 @@ export default function ExplorePage() {
             <div className="row g-4">
               {filteredServices.map((service) => (
                 <div key={service.id} className="col-12 col-md-6 col-lg-4">
-                  <ServiceCard service={service} />
+                  <CartaoAnuncio service={service} />
                 </div>
               ))}
             </div>

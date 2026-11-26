@@ -13,7 +13,7 @@ import {
   money,
 } from "@/app/types/management";
 import ProjectFormDialog from "@/app/components/ProjectFormDialog";
-import ServiceDialog from "@/app/components/service/ServiceDialog";
+import JanelaModal from "@/app/components/service/JanelaModal";
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [clients, setClients] = useState<ClientContact[]>([]);
@@ -159,7 +159,7 @@ export default function Projects() {
         />
       )}
       {creating && clients.length === 0 && (
-        <ServiceDialog
+        <JanelaModal
           id="project-needs-contact"
           title="Novo projeto"
           busy={false}
@@ -187,7 +187,7 @@ export default function Projects() {
               Ver contatos
             </Link>
           </div>
-        </ServiceDialog>
+        </JanelaModal>
       )}
     </section>
   );

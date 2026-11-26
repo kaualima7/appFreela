@@ -5,7 +5,7 @@ import Link from "next/link";
 import { API_URL, serviceError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
 import type { FreelancerService } from "@/app/types/service";
-import ServiceForm from "@/app/components/service/ServiceForm";
+import FormularioAnuncio from "@/app/components/service/FormularioAnuncio";
 export default function EditService() {
   const { id } = useParams<{ id: string }>();
   return <EditServiceContent key={id} id={id} />;
@@ -90,7 +90,7 @@ function EditServiceContent({ id }: { id: string }) {
       ) : (
         service && (
           <div className="card card-body p-4">
-            <ServiceForm
+            <FormularioAnuncio
               service={service}
               onClose={() => router.push("/admin/services")}
               onSaved={() => {

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import HomeHeroPhoto from "./components/HomeHeroPhoto";
-import HomeServiceHighlight from "./components/service/HomeServiceHighlight";
+import AnuncioDestaqueInicio from "./components/service/AnuncioDestaqueInicio";
 
 export const metadata: Metadata = {
   title: "Freelike | Encontre um freelancer",
@@ -50,7 +50,7 @@ export default function Home() {
         <div className="col-lg-7">
           <div className="home-photo">
             <HomeHeroPhoto />
-            <HomeServiceHighlight />
+            <AnuncioDestaqueInicio />
           </div>
         </div>
       </section>

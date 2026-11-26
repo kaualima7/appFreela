@@ -6,7 +6,7 @@ import type { PublicService } from "@/app/types/service";
 import { money } from "@/app/types/management";
 import { loadPublicServices } from "./public-services";
 
-export default function HomeServiceHighlight() {
+export default function AnuncioDestaqueInicio() {
   const [service, setService] = useState<PublicService>();
 
   useEffect(() => {

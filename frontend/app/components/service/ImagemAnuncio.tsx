@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
-export default function ServiceImage({
+export default function ImagemAnuncio({
   title,
   imageUrl,
 }: {

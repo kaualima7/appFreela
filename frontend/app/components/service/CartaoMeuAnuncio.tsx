@@ -1,13 +1,13 @@
 import type { FreelancerService } from "@/app/types/service";
 import Link from "next/link";
-import ServiceImage from "./ServiceImage";
+import ImagemAnuncio from "./ImagemAnuncio";
 
 const priceFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
 });
 
-export default function ManagedServiceCard({
+export default function CartaoMeuAnuncio({
   service,
   onDelete,
   onViewInterests,
@@ -18,7 +18,7 @@ export default function ManagedServiceCard({
 }) {
   return (
     <article className="card service-card h-100">
-      <ServiceImage title={service.title} imageUrl={service.imageUrl} />
+      <ImagemAnuncio title={service.title} imageUrl={service.imageUrl} />
       <div className="card-body d-flex flex-column p-4">
         <div className="d-flex flex-wrap align-items-start gap-2 mb-3">
           <span className="service-category">{service.category}</span>

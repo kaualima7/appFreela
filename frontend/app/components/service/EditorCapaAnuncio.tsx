@@ -64,7 +64,7 @@ function position(value: number) {
   return Math.max(0, Math.min(1, value));
 }
 
-export default function ServiceCoverEditor({
+export default function EditorCapaAnuncio({
   url,
   frame,
   disabled,

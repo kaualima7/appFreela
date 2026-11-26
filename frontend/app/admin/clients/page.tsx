@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { API_URL, managementError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
 import type { ClientContact } from "@/app/types/management";
-import ClientFormDialog from "@/app/components/ClientFormDialog";
-import ServiceDialog from "@/app/components/service/ServiceDialog";
+import FormularioContato from "@/app/components/FormularioContato";
+import JanelaModal from "@/app/components/service/JanelaModal";
 
 export default function Clients() {
   const [clients, setClients] = useState<ClientContact[]>([]);
@@ -176,7 +176,7 @@ export default function Clients() {
         </div>
       )}
       {contactToDelete && (
-        <ServiceDialog
+        <JanelaModal
           id="delete-contact"
           title="Excluir contato"
           busy={deleting}
@@ -209,10 +209,10 @@ export default function Clients() {
               {deleting ? "Excluindo..." : "Excluir contato"}
             </button>
           </div>
-        </ServiceDialog>
+        </JanelaModal>
       )}
       {editing !== undefined && (
-        <ClientFormDialog
+        <FormularioContato
           client={editing ?? undefined}
           onClose={() => setEditing(undefined)}
           onSaved={() => {

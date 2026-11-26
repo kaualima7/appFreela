@@ -4,8 +4,8 @@ import RefreshButton from "@/app/components/RefreshButton";
 
 import Link from "next/link";
 import { useInterests } from "@/app/components/InterestsProvider";
-import LikeButton from "@/app/components/service/LikeButton";
-import ServiceCard from "@/app/components/service/ServiceCard";
+import BotaoInteresse from "@/app/components/service/BotaoInteresse";
+import CartaoAnuncio from "@/app/components/service/CartaoAnuncio";
 
 export default function MyInterests() {
   const { interests, loading, error, reload } = useInterests();
@@ -63,12 +63,12 @@ export default function MyInterests() {
         <div className="row g-4">
           {interests.map((interest) => (
             <div key={interest.id} className="col-12 col-md-6 col-lg-4">
-              <ServiceCard
+              <CartaoAnuncio
                 service={interest.service}
                 unavailable={!interest.service.published}
               >
-                <LikeButton service={interest.service} onlyWithdraw />
-              </ServiceCard>
+                <BotaoInteresse service={interest.service} onlyWithdraw />
+              </CartaoAnuncio>
             </div>
           ))}
         </div>

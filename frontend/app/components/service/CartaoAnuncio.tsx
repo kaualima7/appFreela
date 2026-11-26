@@ -1,7 +1,7 @@
 "use client";
 
 import type { PublicService } from "@/app/types/service";
-import ServiceImage from "./ServiceImage";
+import ImagemAnuncio from "./ImagemAnuncio";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -10,7 +10,7 @@ const priceFormatter = new Intl.NumberFormat("pt-BR", {
   currency: "BRL",
 });
 
-export default function ServiceCard({
+export default function CartaoAnuncio({
   service,
   unavailable = false,
   children,
@@ -27,7 +27,7 @@ export default function ServiceCard({
       className={`card service-card${service.imageUrl ? " h-100" : " service-card-compact"}`}
     >
       {service.imageUrl && (
-        <ServiceImage title={service.title} imageUrl={service.imageUrl} />
+        <ImagemAnuncio title={service.title} imageUrl={service.imageUrl} />
       )}
       <div className="card-body d-flex flex-column p-4">
         <span className="service-category align-self-start mb-3">

@@ -6,16 +6,16 @@ import { authenticatedFetch } from "@/app/login/auth_service";
 import type { FreelancerService } from "@/app/types/service";
 import { serviceCategories } from "@/app/types/service-categories";
 
-import ServiceImage from "./ServiceImage";
-import ServiceCoverEditor, {
+import ImagemAnuncio from "./ImagemAnuncio";
+import EditorCapaAnuncio, {
   defaultCoverFrame,
   prepareServiceCover,
-} from "./ServiceCoverEditor";
+} from "./EditorCapaAnuncio";
 
 const coverTypes = ["image/jpeg", "image/png", "image/webp"];
 const coverLimit = 5 * 1024 * 1024;
 
-export default function ServiceForm({
+export default function FormularioAnuncio({
   service,
   onClose,
   onSaved,
@@ -259,7 +259,7 @@ export default function ServiceForm({
             {coverPreview && (
               <div className="service-cover-preview mt-3">
                 {cover ? (
-                  <ServiceCoverEditor
+                  <EditorCapaAnuncio
                     key={cover}
                     url={cover}
                     frame={coverFrame}
@@ -267,7 +267,7 @@ export default function ServiceForm({
                     onChange={setCoverFrame}
                   />
                 ) : (
-                  <ServiceImage
+                  <ImagemAnuncio
                     title="Prévia da capa do anúncio"
                     imageUrl={coverPreview}
                   />
