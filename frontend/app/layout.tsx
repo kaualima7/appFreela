@@ -7,6 +7,7 @@ import SessionProvider from "./components/SessionProvider";
 import InterestsProvider from "./components/InterestsProvider";
 
 import AccountWorkspace from "./components/AccountWorkspace";
+import { textSizeStorageKey, themeStorageKey } from "./preferences";
 
 const geist = localFont({
   src: "./fonts/Geist-Latin.woff2",
@@ -23,7 +24,28 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={geist.variable} data-scroll-behavior="smooth">
+    <html
+      lang="pt-BR"
+      className={geist.variable}
+      data-scroll-behavior="smooth"
+      data-bs-theme="light"
+      suppressHydrationWarning
+    >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try {
+              if (localStorage.getItem(${JSON.stringify(themeStorageKey)}) === "dark") {
+                document.documentElement.dataset.bsTheme = "dark";
+              }
+              const textSize = localStorage.getItem(${JSON.stringify(textSizeStorageKey)});
+              if (textSize === "medium" || textSize === "large") {
+                document.documentElement.dataset.textSize = textSize;
+              }
+            } catch {}`,
+          }}
+        />
+      </head>
       <body>
         <SessionProvider>
           <InterestsProvider>

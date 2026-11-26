@@ -111,6 +111,16 @@ export default function Header({
                   <i className="bi bi-person-circle" aria-hidden="true" /> Meu
                   perfil
                 </Link>
+                <Link
+                  href="/client/settings"
+                  className={`workspace-link${pathname === "/client/settings" ? " is-active" : ""}`}
+                  onClick={closeMenu}
+                  aria-current={
+                    pathname === "/client/settings" ? "page" : undefined
+                  }
+                >
+                  <i className="bi bi-gear" aria-hidden="true" /> Configurações
+                </Link>
                 <button
                   type="button"
                   className="workspace-link w-100"

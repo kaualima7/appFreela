@@ -12,6 +12,8 @@ const freelancerNavigation = [
   ["/admin/projects", "Projetos", "folder2-open"],
   ["/admin/clients", "Contatos de clientes", "people"],
   ["/admin/profile", "Meu perfil", "person-circle"],
+  ["/admin/settings", "Configurações", "gear"],
+  ["/admin/about", "Sobre", "info-circle"],
 ];
 
 export default function AccountSidebar({
@@ -19,7 +21,7 @@ export default function AccountSidebar({
   onToggle,
 }: {
   collapsed: boolean;
-  onToggle: () => void;
+  onToggle?: () => void;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -54,26 +56,28 @@ export default function AccountSidebar({
             Freelike<span className="brand-dot">.</span>
           </span>
         </Link>
-        <button
-          type="button"
-          className="btn workspace-refresh workspace-collapse-toggle"
-          onClick={onToggle}
-          aria-label={
-            collapsed ? "Expandir barra lateral" : "Recolher barra lateral"
-          }
-          title={
-            collapsed ? "Expandir barra lateral" : "Recolher barra lateral"
-          }
-          aria-controls="account-menu"
-          aria-expanded={!collapsed}
-        >
-          <i
-            className={
-              collapsed ? "bi bi-chevron-bar-right" : "bi bi-chevron-bar-left"
+        {onToggle && (
+          <button
+            type="button"
+            className="btn workspace-refresh workspace-collapse-toggle"
+            onClick={onToggle}
+            aria-label={
+              collapsed ? "Expandir barra lateral" : "Recolher barra lateral"
             }
-            aria-hidden="true"
-          />
-        </button>
+            title={
+              collapsed ? "Expandir barra lateral" : "Recolher barra lateral"
+            }
+            aria-controls="account-menu"
+            aria-expanded={!collapsed}
+          >
+            <i
+              className={
+                collapsed ? "bi bi-chevron-bar-right" : "bi bi-chevron-bar-left"
+              }
+              aria-hidden="true"
+            />
+          </button>
+        )}
         <button
           ref={menuButton}
           type="button"
