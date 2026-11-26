@@ -4,6 +4,7 @@ import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { API_URL, serviceError } from "@/app/api";
 import { authenticatedFetch } from "@/app/login/auth_service";
 import type { FreelancerService } from "@/app/types/service";
+import { serviceCategories } from "@/app/types/service-categories";
 
 import ServiceImage from "./ServiceImage";
 import ServiceCoverEditor, {
@@ -26,6 +27,9 @@ export default function ServiceForm({
   const [title, setTitle] = useState(service?.title ?? "");
   const [description, setDescription] = useState(service?.description ?? "");
   const [category, setCategory] = useState(service?.category ?? "");
+  const previousCategory = service?.category;
+  const hasLegacyCategory =
+    previousCategory && !serviceCategories.includes(previousCategory);
   const [startingPrice, setStartingPrice] = useState(
     service?.startingPrice ?? "",
   );
@@ -74,13 +78,18 @@ export default function ServiceForm({
       title.trim().length < 2 ||
       title.trim().length > 120 ||
       description.trim().length < 2 ||
-      description.trim().length > 2000 ||
-      category.trim().length < 2 ||
-      category.trim().length > 80
+      description.trim().length > 2000
     ) {
       setError(
-        "Confira o título, a descrição e a categoria. Não use apenas espaços.",
+        "Confira o título e a descrição. Não use apenas espaços.",
       );
+      return;
+    }
+    if (
+      !category ||
+      (!serviceCategories.includes(category) && category !== previousCategory)
+    ) {
+      setError("Escolha uma categoria para o anúncio.");
       return;
     }
     if (!/^(0|[1-9]\d{0,8})(\.\d{1,2})?$/.test(startingPrice.trim())) {
@@ -94,7 +103,7 @@ export default function ServiceForm({
       const serviceFields = {
         title: title.trim(),
         description: description.trim(),
-        category: category.trim(),
+        category,
         startingPrice: startingPrice.trim(),
         published,
         ...(removeCover ? { imageUrl: null } : {}),
@@ -183,15 +192,27 @@ export default function ServiceForm({
               <label htmlFor="service-category" className="form-label">
                 Categoria
               </label>
-              <input
+              <select
                 id="service-category"
-                className="form-control"
+                className="form-select"
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
-                minLength={2}
-                maxLength={80}
                 required
-              />
+              >
+                <option value="" disabled>
+                  Selecione uma categoria
+                </option>
+                {hasLegacyCategory && (
+                  <option value={previousCategory}>
+                    {previousCategory} (categoria anterior)
+                  </option>
+                )}
+                {serviceCategories.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="col-sm-6">
               <label htmlFor="service-price" className="form-label">

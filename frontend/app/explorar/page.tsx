@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { loadPublicServices } from "@/app/components/service/public-services";
 import ServiceCard from "@/app/components/service/ServiceCard";
 import type { PublicService } from "@/app/types/service";
+import { serviceCategories } from "@/app/types/service-categories";
 
 function normalizeSearch(value: string) {
   return value
@@ -23,12 +24,15 @@ export default function ExplorePage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
 
-  const categories = [
-    ...new Set(services.map((service) => service.category)),
-  ].sort((left, right) => left.localeCompare(right, "pt-BR"));
   const query = normalizeSearch(search);
+  const selectedCategory = normalizeSearch(category);
+  const hasFilters = Boolean(query || selectedCategory);
   const filteredServices = services.filter((service) => {
-    if (category && service.category !== category) return false;
+    if (
+      selectedCategory && normalizeSearch(service.category) !== selectedCategory
+    ) {
+      return false;
+    }
     const { freelancer } = service;
     return [
       service.title,
@@ -91,7 +95,7 @@ export default function ExplorePage() {
           </p>
         </div>
 
-        {!loading && !error && services.length > 0 && (
+        {!loading && !error && (
           <div
             className="catalog-search row g-3 align-items-end mb-4"
             role="search"
@@ -132,7 +136,7 @@ export default function ExplorePage() {
                 onChange={(event) => setCategory(event.target.value)}
               >
                 <option value="">Todas as categorias</option>
-                {categories.map((name) => (
+                {serviceCategories.map((name) => (
                   <option key={name} value={name}>
                     {name}
                   </option>
@@ -174,7 +178,7 @@ export default function ExplorePage() {
                 Tentar novamente
               </button>
             </div>
-          ) : services.length === 0 ? (
+          ) : services.length === 0 && !hasFilters ? (
             <div className="catalog-state text-center" role="status">
               <span className="state-icon mb-3">
                 <i className="bi bi-grid" aria-hidden="true" />
@@ -187,9 +191,22 @@ export default function ExplorePage() {
               <RefreshButton label="Atualizar vitrine" onClick={retry} />
             </div>
           ) : filteredServices.length === 0 ? (
-            <p role="status" className="catalog-state">
-              Nenhum serviço encontrado. Tente outro termo ou limpe os filtros.
-            </p>
+            <div className="catalog-state text-center" role="status">
+              <span className="state-icon mb-3">
+                <i className="bi bi-emoji-frown" aria-hidden="true" />
+              </span>
+              <h2 className="h5">Nenhum serviço encontrado com esses filtros</h2>
+              <p className="text-secondary mb-3">
+                Tente outro termo, escolha outra categoria ou limpe os filtros.
+              </p>
+              <button
+                type="button"
+                className="btn btn-outline-primary"
+                onClick={clearFilters}
+              >
+                Limpar filtros
+              </button>
+            </div>
           ) : (
             <div className="row g-4">
               {filteredServices.map((service) => (
