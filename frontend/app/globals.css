@@ -281,38 +281,6 @@ body {
   padding: clamp(1.25rem, 4vw, 3.5rem);
 }
 
-.workspace-welcome {
-  padding: clamp(1.25rem, 3vw, 2.25rem);
-  border: 1px solid var(--freelike-border);
-  border-radius: 0.9rem;
-  background: var(--freelike-nav-bg);
-}
-
-.workspace-shortcut {
-  display: block;
-  height: 100%;
-  padding: 1.25rem;
-  border: 1px solid var(--freelike-border);
-  border-radius: 0.8rem;
-  color: var(--bs-body-color);
-  text-decoration: none;
-}
-
-.workspace-shortcut:hover {
-  background: var(--freelike-hover-bg);
-  border-color: var(--freelike-field-focus);
-}
-
-.workspace-shortcut-icon {
-  display: inline-grid;
-  width: 2.5rem;
-  height: 2.5rem;
-  place-items: center;
-  border-radius: 0.6rem;
-  background: var(--freelike-chip-bg);
-  color: var(--freelike-blue);
-}
-
 .workspace-actions .btn {
   --bs-btn-padding-x: 0.95rem;
   --bs-btn-padding-y: 0.6rem;
@@ -381,8 +349,7 @@ body {
 }
 
 .workspace-link:focus-visible,
-.workspace-collapse-toggle:focus-visible,
-.workspace-shortcut:focus-visible {
+.workspace-collapse-toggle:focus-visible {
   outline: 2px solid var(--freelike-blue);
   outline-offset: 2px;
 }

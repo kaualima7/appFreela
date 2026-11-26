@@ -10,6 +10,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ServicesModule } from './services/services.module';
 import { ClientPortalModule } from './client-portal/client-portal.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ClientPortalModule } from './client-portal/client-portal.module';
     PaymentsModule,
     ServicesModule,
     ClientPortalModule,
+    DashboardModule,
   ], //outros módulos
   controllers: [AppController], //quem recebe requisições http
   providers: [AppService], //serviços/lógica da aplicação

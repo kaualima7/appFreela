@@ -1,0 +1,307 @@
+.dashboard {
+  --dashboard-blue: #24588c;
+  --dashboard-blue-bar: #74a4d6;
+  --dashboard-blue-soft: #ecf3fa;
+  --dashboard-berry: #8b3b70;
+  --dashboard-berry-bar: #cc8eb0;
+  --dashboard-berry-soft: #faedf5;
+  --dashboard-surface: var(--bs-body-bg);
+}
+
+:global([data-bs-theme="dark"]) .dashboard {
+  --dashboard-blue: #a3ceff;
+  --dashboard-blue-bar: #5d8aba;
+  --dashboard-blue-soft: #20354d;
+  --dashboard-berry: #f0a9d0;
+  --dashboard-berry-bar: #ad6591;
+  --dashboard-berry-soft: #392737;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-block: 0.25rem 1.35rem;
+  border-bottom: 1px solid var(--freelike-border);
+}
+
+.revenue,
+.charts,
+.activity {
+  display: grid;
+  gap: 1rem;
+}
+
+.revenue {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+
+.charts,
+.activity {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.activity {
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+}
+
+.metric,
+.chart,
+.activityCounts,
+.highlight {
+  min-width: 0;
+  border: 1px solid var(--freelike-border);
+  border-radius: 1rem;
+  background: var(--dashboard-surface);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.15rem;
+}
+
+.metric:first-child {
+  background: var(--dashboard-blue-soft);
+}
+
+.metric dt,
+.chartHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.metric dt {
+  color: var(--bs-secondary-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.metric dt i,
+.chartIcon,
+.heart {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.6rem;
+  background: var(--dashboard-blue-soft);
+  color: var(--dashboard-blue);
+  font-size: 1rem;
+}
+
+.metric dd {
+  margin: 0;
+  color: var(--dashboard-blue);
+  font-size: clamp(1.22rem, 2.1vw, 1.8rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.chart {
+  --series: var(--dashboard-blue);
+  --series-bar: var(--dashboard-blue-bar);
+  --series-soft: var(--dashboard-blue-soft);
+  --plot-height: 9rem;
+  --label-height: 1.7rem;
+  padding: clamp(0.9rem, 2vw, 1.25rem);
+}
+
+.likesChart {
+  --series: var(--dashboard-berry);
+  --series-bar: var(--dashboard-berry-bar);
+  --series-soft: var(--dashboard-berry-soft);
+}
+
+.chartIcon {
+  background: var(--series-soft);
+  color: var(--series);
+}
+
+.chartSelection {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.55rem;
+  margin: 0.35rem 0 1.2rem;
+}
+
+.chartSelection > span {
+  color: var(--series);
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.chartSelection small {
+  color: var(--bs-secondary-color);
+}
+
+.chartPlot {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.chartAxis,
+.chartLines {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: var(--plot-height);
+}
+
+.chartAxis {
+  color: var(--bs-secondary-color);
+  font-size: 0.65rem;
+  text-align: right;
+  line-height: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.chartArea {
+  position: relative;
+  min-width: 0;
+}
+
+.chartLines {
+  position: absolute;
+  inset: 0 0 auto;
+  pointer-events: none;
+}
+
+.chartLines span {
+  border-top: 1px dashed var(--freelike-border);
+}
+
+.chartLines span:last-child {
+  border-top-style: solid;
+}
+
+.chartColumns {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(0.1rem, 0.6vw, 0.35rem);
+}
+
+.chartColumn {
+  display: grid;
+  grid-template-rows: var(--plot-height) var(--label-height);
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0.45rem;
+  background: transparent;
+  color: var(--bs-secondary-color);
+  font-size: 0.75rem;
+}
+
+.chartColumn:hover {
+  background: var(--series-soft);
+}
+
+.chartColumn:focus-visible {
+  outline: 2px solid var(--series);
+  outline-offset: 2px;
+}
+
+.chartTrack {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+.chartBar {
+  width: min(65%, 2.25rem);
+  border-radius: 0.35rem 0.35rem 0 0;
+  background: var(--series-bar);
+  transition: background-color 160ms ease;
+}
+
+.chartMonth {
+  align-self: center;
+  text-transform: capitalize;
+}
+
+.chartColumn[aria-pressed="true"] {
+  color: var(--series);
+  font-weight: 700;
+}
+
+.chartColumn[aria-pressed="true"] .chartBar {
+  background: var(--series);
+}
+
+.activityCounts {
+  display: grid;
+  align-content: center;
+  padding: 0.2rem 1.1rem;
+}
+
+.activityCounts > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding-block: 0.7rem;
+}
+
+.activityCounts > div + div {
+  border-top: 1px solid var(--freelike-border);
+}
+
+.activityCounts dt {
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.activityCounts dt i {
+  margin-inline-end: 0.5rem;
+  color: var(--dashboard-blue);
+}
+
+.activityCounts dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.highlight {
+  padding: 1.1rem;
+  background: var(--dashboard-berry-soft);
+}
+
+.heart {
+  margin-bottom: 0.65rem;
+  color: var(--dashboard-berry);
+  background: var(--dashboard-surface);
+}
+
+.highlightLink {
+  color: var(--dashboard-berry);
+  text-underline-offset: 0.2em;
+}
+
+@media (max-width: 991.98px) {
+  .charts,
+  .activity {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chartBar {
+    transition: none;
+  }
+}
